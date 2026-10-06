@@ -1,5 +1,3 @@
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { FeedScreen } from '@/screens/feed/feed-screen';
 
-export default function FeedTab() {
-  return <PlaceholderScreen title="feed" />;
-}
+export default FeedScreen;

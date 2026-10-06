@@ -5,14 +5,14 @@ import { Text } from '@/components/text';
 import { spacing } from '@/theme';
 
 // Stands in for a tab until its module builds the real screen.
-export function PlaceholderScreen({ title }: { title: string }) {
+export function PlaceholderScreen({ title, note = 'coming soon' }: { title: string; note?: string }) {
   return (
     <PaperBackground>
       <View style={styles.center}>
         <Text variant="title" accessibilityRole="header">
           {title}
         </Text>
-        <Text variant="subhead">coming soon</Text>
+        <Text variant="subhead">{note}</Text>
       </View>
     </PaperBackground>
   );
