@@ -1,5 +1,3 @@
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { ChallengeScreen } from '@/screens/challenge/challenge-screen';
 
-export default function ChallengeTab() {
-  return <PlaceholderScreen title="challenge" />;
-}
+export default ChallengeScreen;

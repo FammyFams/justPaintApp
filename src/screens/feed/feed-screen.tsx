@@ -6,13 +6,13 @@ import { Button } from '@/components/button';
 import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
-import { useFeed } from '@/data/paintings';
+import { paintingsOf, useFeed } from '@/data/paintings';
 import { colors, spacing } from '@/theme';
 
 export function FeedScreen() {
   const feed = useFeed();
   const [refreshing, setRefreshing] = useState(false);
-  const paintings = feed.data?.pages.flatMap((page) => page.paintings) ?? [];
+  const paintings = paintingsOf(feed.data);
 
   const onRefresh = async () => {
     setRefreshing(true);

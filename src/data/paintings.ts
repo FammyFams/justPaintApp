@@ -91,6 +91,28 @@ type FeedPage = {
   hasMore: boolean;
 };
 
+// Every painting from a paged list, in order, each once (offset paging can
+// repeat one when a new post arrives mid-scroll).
+export function paintingsOf(data: InfiniteData<FeedPage, unknown> | undefined): Painting[] {
+  const seen = new Set<string>();
+  return (data?.pages ?? [])
+    .flatMap((page) => page.paintings)
+    .filter((painting) => !seen.has(painting.id) && seen.add(painting.id));
+}
+
+// Pull to refresh starts a paged list over from its first page, instead of
+// re-fetching every page scrolled so far.
+function useRefreshFromTop(queryKey: readonly unknown[], refetch: () => Promise<unknown>) {
+  const queryClient = useQueryClient();
+  return async () => {
+    queryClient.setQueryData<InfiniteData<FeedPage, unknown>>(
+      queryKey,
+      (data) => data && { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) },
+    );
+    await refetch();
+  };
+}
+
 // Newest first. Pages continue from the last post's time instead of an offset,
 // so new posts arriving mid-scroll don't repeat paintings on the next page.
 async function fetchFeedPage(before: string | null): Promise<FeedPage> {
@@ -112,24 +134,65 @@ async function fetchFeedPage(before: string | null): Promise<FeedPage> {
 }
 
 export function useFeed() {
-  const queryClient = useQueryClient();
   const query = useInfiniteQuery({
     queryKey: FEED_KEY,
     queryFn: ({ pageParam }) => fetchFeedPage(pageParam),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => (last.hasMore ? last.paintings.at(-1)?.createdAt : undefined),
   });
-
-  // Pull to refresh starts over from the newest page, instead of re-fetching
-  // every page scrolled so far.
-  const refresh = async () => {
-    queryClient.setQueryData<InfiniteData<FeedPage, string | null>>(FEED_KEY, (data) =>
-      data && { pages: data.pages.slice(0, 1), pageParams: data.pageParams.slice(0, 1) },
-    );
-    await query.refetch();
-  };
-
+  const refresh = useRefreshFromTop(FEED_KEY, query.refetch);
   return { ...query, refresh };
+}
+
+const CHALLENGE_KEY = ['paintings', 'challenge'];
+
+// October challenge entries, newest day first, then newest post (the website's
+// /feed/october order). Paged by offset, since the order isn't by time alone; a
+// new entry lands on today, at the top, so it only pushes rows down: the next
+// page may repeat one (paintingsOf drops it) but never skips one.
+async function fetchChallengePage(offset: number): Promise<FeedPage> {
+  const { data, error } = await supabase
+    .from('paintings')
+    .select(PAINTING_SELECT)
+    .eq('october_challenge', true)
+    .order('october_day', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    // One extra row tells whether there are more.
+    .range(offset, offset + FEED_PAGE_SIZE);
+  if (error) throw error;
+  const rows = data as unknown as PaintingRow[];
+  return {
+    paintings: rows.slice(0, FEED_PAGE_SIZE).map(toPainting),
+    hasMore: rows.length > FEED_PAGE_SIZE,
+  };
+}
+
+export function useChallengeEntries() {
+  const query = useInfiniteQuery({
+    queryKey: CHALLENGE_KEY,
+    queryFn: ({ pageParam }) => fetchChallengePage(pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (last, pages) => (last.hasMore ? pages.length * FEED_PAGE_SIZE : undefined),
+  });
+  const refresh = useRefreshFromTop(CHALLENGE_KEY, query.refetch);
+  return { ...query, refresh };
+}
+
+// A painting already loaded by any list (feed, challenge, an artist page).
+function findCachedPainting(
+  queryClient: ReturnType<typeof useQueryClient>,
+  id: string,
+): Painting | undefined {
+  for (const [, data] of queryClient.getQueriesData<unknown>({ queryKey: ['paintings'] })) {
+    const list: Painting[] = Array.isArray(data)
+      ? data
+      : data && typeof data === 'object' && 'pages' in data
+        ? paintingsOf(data as InfiniteData<FeedPage, unknown>)
+        : [];
+    const found = list.find((painting) => painting.id === id);
+    if (found) return found;
+  }
+  return undefined;
 }
 
 // Null when there is no such painting (deleted, or a malformed id in a link).
@@ -152,16 +215,8 @@ export function usePainting(id: string) {
   return useQuery({
     queryKey: ['paintings', 'detail', id],
     queryFn: () => fetchPainting(id),
-    // Opens instantly with what the feed or an artist page already loaded, then refreshes.
-    placeholderData: () => {
-      const feed = queryClient
-        .getQueryData<InfiniteData<FeedPage, string | null>>(FEED_KEY)
-        ?.pages.flatMap((page) => page.paintings);
-      const artistPages = queryClient
-        .getQueriesData<Painting[]>({ queryKey: ['paintings', 'artist'] })
-        .flatMap(([, paintings]) => paintings ?? []);
-      return [...(feed ?? []), ...artistPages].find((painting) => painting.id === id);
-    },
+    // Opens instantly with what a list already loaded, then refreshes.
+    placeholderData: () => findCachedPainting(queryClient, id),
   });
 }
 
