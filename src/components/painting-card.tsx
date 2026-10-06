@@ -1,57 +1,54 @@
 import { Image } from 'expo-image';
-import { StyleSheet, View } from 'react-native';
+import { Link } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
-import type { Painting } from '@/data/paintings';
+import { aspectRatios, type Painting } from '@/data/paintings';
 import { colors, radius, spacing } from '@/theme';
-
-// Fixed ratios, so cards keep their size while images load.
-const aspectRatio: Record<Painting['aspect'], number> = {
-  portrait: 3 / 4,
-  landscape: 4 / 3,
-  square: 1,
-};
 
 export function PaintingCard({ painting }: { painting: Painting }) {
   const guest = !painting.artistId;
+  const tags = painting.tags.slice(0, 3);
   return (
-    <View
-      style={styles.card}
-      accessible
-      accessibilityLabel={[
-        painting.title,
-        `by ${painting.authorName}${guest ? ', guest' : ''}`,
-        ...painting.tags.slice(0, 3).map((tag) => tag.name),
-      ].join(', ')}
-    >
-      <Image
-        source={{ uri: painting.imageUrl }}
-        // Cards are recycled while scrolling; this stops an old painting showing.
-        recyclingKey={painting.id}
-        cachePolicy="disk"
-        contentFit="cover"
-        transition={150}
-        style={[styles.image, { aspectRatio: aspectRatio[painting.aspect] }]}
-      />
-      <View style={styles.caption}>
-        <Text variant="headline" numberOfLines={1}>
-          {painting.title}
-        </Text>
-        <Text variant="caption" numberOfLines={1} style={styles.author}>
-          {painting.authorName.toUpperCase()}
-          {guest && ' · guest'}
-        </Text>
-        {painting.tags.length > 0 && (
-          <View style={styles.tags}>
-            {painting.tags.slice(0, 3).map((tag) => (
-              <Text key={tag.id} variant="caption" tone="default" style={styles.tag}>
-                {tag.name}
-              </Text>
-            ))}
-          </View>
-        )}
-      </View>
-    </View>
+    <Link href={{ pathname: '/painting/[id]', params: { id: painting.id } }} asChild>
+      <Pressable
+        style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+        accessibilityRole="link"
+        accessibilityLabel={[
+          painting.title,
+          `by ${painting.authorName}${guest ? ', guest' : ''}`,
+          ...tags.map((tag) => tag.name),
+        ].join(', ')}
+      >
+        <Image
+          source={{ uri: painting.imageUrl }}
+          // Cards are recycled while scrolling; this stops an old painting showing.
+          recyclingKey={painting.id}
+          cachePolicy="disk"
+          contentFit="cover"
+          transition={150}
+          // Fixed ratios, so cards keep their size while images load.
+          style={[styles.image, { aspectRatio: aspectRatios[painting.aspect] }]}
+        />
+        <View style={styles.caption}>
+          <Text variant="headline" numberOfLines={1}>
+            {painting.title}
+          </Text>
+          <Text variant="caption" numberOfLines={1} style={styles.author}>
+            {painting.authorName.toUpperCase()}
+            {guest && ' · guest'}
+          </Text>
+          {tags.length > 0 && (
+            <View style={styles.tags}>
+              {tags.map((tag) => (
+                <TagChip key={tag.id} name={tag.name} />
+              ))}
+            </View>
+          )}
+        </View>
+      </Pressable>
+    </Link>
   );
 }
 
@@ -62,6 +59,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: radius,
     padding: spacing.sm,
+  },
+  pressed: {
+    backgroundColor: colors.muted,
   },
   image: {
     width: '100%',
@@ -82,12 +82,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: spacing.xs,
     paddingTop: spacing.xs,
-  },
-  tag: {
-    backgroundColor: colors.muted,
-    borderRadius: radius,
-    overflow: 'hidden',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
   },
 });

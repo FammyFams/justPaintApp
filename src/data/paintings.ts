@@ -31,6 +31,13 @@ export type Painting = {
   octoberDay: number | null;
 };
 
+// Width / height of each aspect bucket (the website uses the same: 3:4, 4:3, 1:1).
+export const aspectRatios: Record<Painting['aspect'], number> = {
+  portrait: 3 / 4,
+  landscape: 4 / 3,
+  square: 1,
+};
+
 // Same columns as the website (lib/paintings.ts). The profiles embed must name
 // its foreign key, or PostgREST fails with "ambiguous relationship".
 const PAINTING_SELECT = `
@@ -123,6 +130,35 @@ export function useFeed() {
   };
 
   return { ...query, refresh };
+}
+
+// Null when there is no such painting (deleted, or a malformed id in a link).
+async function fetchPainting(id: string): Promise<Painting | null> {
+  const { data, error } = await supabase
+    .from('paintings')
+    .select(PAINTING_SELECT)
+    .eq('id', id)
+    .maybeSingle();
+  if (error) {
+    // 22P02: the id isn't a uuid, so it's a missing painting, not an outage.
+    if (error.code === '22P02') return null;
+    throw error;
+  }
+  return data ? toPainting(data as unknown as PaintingRow) : null;
+}
+
+export function usePainting(id: string) {
+  const queryClient = useQueryClient();
+  return useQuery({
+    queryKey: ['paintings', 'detail', id],
+    queryFn: () => fetchPainting(id),
+    // Opens instantly with what the feed already loaded, then refreshes.
+    placeholderData: () =>
+      queryClient
+        .getQueryData<InfiniteData<FeedPage, string | null>>(FEED_KEY)
+        ?.pages.flatMap((page) => page.paintings)
+        .find((painting) => painting.id === id),
+  });
 }
 
 export function useTags() {
