@@ -11,6 +11,7 @@ import { useChallenge, type Challenge } from '@/data/challenge';
 import { paintingsOf, useChallengeEntries } from '@/data/paintings';
 import { env } from '@/lib/env';
 import { DayHeading } from '@/screens/challenge/day-heading';
+import { ShareCalendarButton } from '@/screens/challenge/share-calendar-button';
 import { TodayCard } from '@/screens/challenge/today-card';
 import { colors, spacing } from '@/theme';
 
@@ -69,10 +70,13 @@ export function ChallengeScreen() {
               challenge={challenge.data}
               startLabel={formatDay(challenge.data.startDate)}
               action={
-                <Button
-                  title={showCalendar ? 'hide calendar' : 'show calendar'}
-                  onPress={() => setShowCalendar((shown) => !shown)}
-                />
+                <View style={styles.calendarActions}>
+                  <ShareCalendarButton challenge={challenge.data} imageUrl={CALENDAR_URL} />
+                  <Button
+                    title={showCalendar ? 'hide calendar' : 'show calendar'}
+                    onPress={() => setShowCalendar((shown) => !shown)}
+                  />
+                </View>
               }
             />
             {showCalendar && (
@@ -184,6 +188,13 @@ const styles = StyleSheet.create({
   calendar: {
     gap: spacing.sm,
     paddingTop: spacing.md,
+  },
+  // Wraps onto two lines, still right-aligned, when large text makes them too wide.
+  calendarActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    gap: spacing.sm,
   },
   inline: {
     gap: spacing.sm,
