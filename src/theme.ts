@@ -46,6 +46,8 @@ export const touchTarget = 44;
 export const paperGrainOpacity = 0.02;
 
 export const type = {
+  // The "JUST PAINT" heading on the feed, italic like the website's h1.
+  display: { fontFamily: fonts.italic, fontSize: 36, lineHeight: 40, color: colors.foreground },
   largeTitle: { fontFamily: fonts.extrabold, fontSize: 30, lineHeight: 36, color: colors.foreground },
   title: { fontFamily: fonts.semibold, fontSize: 22, lineHeight: 28, color: colors.foreground },
   // The daily challenge prompt: big and italic, like the website.
