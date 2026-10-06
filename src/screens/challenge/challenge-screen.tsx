@@ -71,7 +71,9 @@ export function ChallengeScreen() {
               startLabel={formatDay(challenge.data.startDate)}
               action={
                 <View style={styles.calendarActions}>
-                  <ShareCalendarButton challenge={challenge.data} imageUrl={CALENDAR_URL} />
+                  {showCalendar && (
+                    <ShareCalendarButton challenge={challenge.data} imageUrl={CALENDAR_URL} />
+                  )}
                   <Button
                     title={showCalendar ? 'hide calendar' : 'show calendar'}
                     onPress={() => setShowCalendar((shown) => !shown)}
