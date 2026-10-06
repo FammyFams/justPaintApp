@@ -1,4 +1,4 @@
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Link, router, Stack, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import {
   ActivityIndicator,
@@ -15,11 +15,12 @@ import { PaperBackground } from '@/components/paper-background';
 import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
 import { aspectRatios, usePainting } from '@/data/paintings';
+import { artistHandle } from '@/lib/artist-url';
 import { formatDate } from '@/lib/dates';
 import { env } from '@/lib/env';
 import { CommentList } from '@/screens/painting/comment-list';
 import { ZoomableImage } from '@/screens/painting/zoomable-image';
-import { colors, spacing, touchTarget } from '@/theme';
+import { colors, fonts, spacing, touchTarget } from '@/theme';
 
 export function PaintingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -35,12 +36,6 @@ export function PaintingScreen() {
     <PaperBackground>
       <Stack.Screen
         options={{
-          headerShown: true,
-          title: '',
-          headerBackButtonDisplayMode: 'minimal',
-          headerTintColor: colors.foreground,
-          headerStyle: { backgroundColor: colors.background },
-          headerShadowVisible: false,
           headerRight: () => (
             <Pressable
               onPress={share}
@@ -71,16 +66,42 @@ export function PaintingScreen() {
               <Text variant="title" accessibilityRole="header">
                 {painting.data.title}
               </Text>
-              {/* A7 turns the artist's name into a link to their page. */}
-              <Text variant="subhead">
-                by{' '}
-                <Text variant="subhead" tone="default">
-                  {painting.data.authorName}
+              {painting.data.artistId ? (
+                <Link
+                  href={{
+                    pathname: '/artist/[name]',
+                    params: {
+                      name: artistHandle({
+                        id: painting.data.artistId,
+                        displayName: painting.data.authorName,
+                      }),
+                    },
+                  }}
+                  asChild
+                >
+                  <Pressable
+                    accessibilityRole="link"
+                    accessibilityLabel={`by ${painting.data.authorName}`}
+                    style={({ pressed }) => [styles.artistLink, pressed && styles.pressed]}
+                  >
+                    <Text variant="subhead">
+                      by{' '}
+                      <Text variant="subhead" tone="primary" style={styles.artistName}>
+                        {painting.data.authorName}
+                      </Text>
+                    </Text>
+                  </Pressable>
+                </Link>
+              ) : (
+                <Text variant="subhead">
+                  by{' '}
+                  <Text variant="subhead" tone="default">
+                    {painting.data.authorName}
+                  </Text>
+                  {' · guest'}
                 </Text>
-                {painting.data.artistId ? '' : ' · guest'}
-                {'  '}
-                {formatDate(painting.data.createdAt)}
-              </Text>
+              )}
+              <Text variant="caption">{formatDate(painting.data.createdAt)}</Text>
             </View>
 
             {/* A10 turns this into the heart button. */}
@@ -150,6 +171,17 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     gap: spacing.xs,
+  },
+  artistLink: {
+    alignSelf: 'flex-start',
+    minHeight: touchTarget,
+    justifyContent: 'center',
+  },
+  artistName: {
+    fontFamily: fonts.semibold,
+  },
+  pressed: {
+    opacity: 0.6,
   },
   hearts: {
     flexDirection: 'row',

@@ -15,6 +15,16 @@ import { colors, fonts } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
+// Pages pushed over the tabs: a plain bar with just a back chevron.
+const pageHeader = {
+  headerShown: true,
+  title: '',
+  headerBackButtonDisplayMode: 'minimal',
+  headerTintColor: colors.foreground,
+  headerStyle: { backgroundColor: colors.background },
+  headerShadowVisible: false,
+} as const;
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     [fonts.regular]: PlusJakartaSans_400Regular,
@@ -39,7 +49,10 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
           }}
-        />
+        >
+          <Stack.Screen name="painting/[id]" options={pageHeader} />
+          <Stack.Screen name="artist/[name]" options={pageHeader} />
+        </Stack>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

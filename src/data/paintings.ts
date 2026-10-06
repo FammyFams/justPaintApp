@@ -152,12 +152,33 @@ export function usePainting(id: string) {
   return useQuery({
     queryKey: ['paintings', 'detail', id],
     queryFn: () => fetchPainting(id),
-    // Opens instantly with what the feed already loaded, then refreshes.
-    placeholderData: () =>
-      queryClient
+    // Opens instantly with what the feed or an artist page already loaded, then refreshes.
+    placeholderData: () => {
+      const feed = queryClient
         .getQueryData<InfiniteData<FeedPage, string | null>>(FEED_KEY)
-        ?.pages.flatMap((page) => page.paintings)
-        .find((painting) => painting.id === id),
+        ?.pages.flatMap((page) => page.paintings);
+      const artistPages = queryClient
+        .getQueriesData<Painting[]>({ queryKey: ['paintings', 'artist'] })
+        .flatMap(([, paintings]) => paintings ?? []);
+      return [...(feed ?? []), ...artistPages].find((painting) => painting.id === id);
+    },
+  });
+}
+
+// Everything one artist posted, newest first (the website loads them all too).
+export function useArtistPaintings(artistId: string | undefined) {
+  return useQuery({
+    queryKey: ['paintings', 'artist', artistId],
+    queryFn: async (): Promise<Painting[]> => {
+      const { data, error } = await supabase
+        .from('paintings')
+        .select(PAINTING_SELECT)
+        .eq('owner_id', artistId!)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data as unknown as PaintingRow[]).map(toPainting);
+    },
+    enabled: !!artistId,
   });
 }
 
