@@ -6,10 +6,11 @@ import { Button } from '@/components/button';
 import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
-import { challengeToday, useChallenge, type Challenge } from '@/data/challenge';
+import { ZoomableImage } from '@/components/zoomable-image';
+import { useChallenge, type Challenge } from '@/data/challenge';
 import { paintingsOf, useChallengeEntries } from '@/data/paintings';
+import { env } from '@/lib/env';
 import { DayHeading } from '@/screens/challenge/day-heading';
-import { PromptCalendar } from '@/screens/challenge/prompt-calendar';
 import { TodayCard } from '@/screens/challenge/today-card';
 import { colors, spacing } from '@/theme';
 
@@ -21,9 +22,15 @@ const dayFormat = new Intl.DateTimeFormat('en-US', {
 });
 const formatDay = (date: string) => dayFormat.format(new Date(date)).toLowerCase();
 
-function todayNumber(challenge: Challenge): number | null {
-  const today = challengeToday(challenge);
-  return today.phase === 'during' ? today.prompt.day : null;
+// The website's calendar picture (also on its challenge page). A static file on
+// Vercel's CDN, kept in the disk cache, so each phone loads it about once.
+// October-only, like the database columns.
+const CALENDAR_URL = `${env.siteUrl}/october-challenge/calendar.png`;
+
+// The picture's text, for screen readers.
+function calendarLabel(challenge: Challenge): string {
+  const days = challenge.prompts.map((p) => `${formatDay(p.date)}, ${p.prompt}`);
+  return `${challenge.name} calendar. ${days.join('. ')}`;
 }
 
 export function ChallengeScreen() {
@@ -69,7 +76,16 @@ export function ChallengeScreen() {
               }
             />
             {showCalendar && (
-              <PromptCalendar challenge={challenge.data} today={todayNumber(challenge.data)} />
+              <View style={styles.calendar}>
+                <ZoomableImage
+                  uri={CALENDAR_URL}
+                  initialAspectRatio={1080 / 1350}
+                  label={calendarLabel(challenge.data)}
+                />
+                <Text variant="caption" style={styles.center}>
+                  pinch to zoom.
+                </Text>
+              </View>
             )}
           </>
         ) : challenge.isPending ? (
@@ -164,6 +180,10 @@ const styles = StyleSheet.create({
   },
   start: {
     alignSelf: 'flex-start',
+  },
+  calendar: {
+    gap: spacing.sm,
+    paddingTop: spacing.md,
   },
   inline: {
     gap: spacing.sm,
