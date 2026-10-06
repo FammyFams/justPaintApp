@@ -58,11 +58,15 @@ export function ChallengeScreen() {
       <View style={styles.today}>
         {challenge.data ? (
           <>
-            <TodayCard challenge={challenge.data} startLabel={formatDay(challenge.data.startDate)} />
-            <Button
-              title={showCalendar ? 'hide calendar' : 'show calendar'}
-              onPress={() => setShowCalendar((shown) => !shown)}
-              style={styles.calendarToggle}
+            <TodayCard
+              challenge={challenge.data}
+              startLabel={formatDay(challenge.data.startDate)}
+              action={
+                <Button
+                  title={showCalendar ? 'hide calendar' : 'show calendar'}
+                  onPress={() => setShowCalendar((shown) => !shown)}
+                />
+              }
             />
             {showCalendar && (
               <PromptCalendar challenge={challenge.data} today={todayNumber(challenge.data)} />
@@ -160,10 +164,6 @@ const styles = StyleSheet.create({
   },
   start: {
     alignSelf: 'flex-start',
-  },
-  calendarToggle: {
-    alignSelf: 'flex-start',
-    marginTop: spacing.md,
   },
   inline: {
     gap: spacing.sm,
