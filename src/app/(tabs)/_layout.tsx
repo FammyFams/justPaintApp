@@ -1,45 +1,100 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { Platform } from 'react-native';
+import { Image } from 'expo-image';
+import { Tabs } from 'expo-router';
+import { StyleSheet } from 'react-native';
 
-import { colors } from '@/theme';
+import { TabIcon } from '@/components/tab-icon';
+import { colors, fonts } from '@/theme';
 
+// JS tabs, not NativeTabs: on iOS 26 the native bar is always see-through
+// Liquid Glass. This one is flat and solid, like the website.
 export default function TabLayout() {
   return (
-    <NativeTabs
-      tintColor={colors.primary}
-      iconColor={{ default: colors.mutedForeground, selected: colors.primary }}
-      labelStyle={{ default: { color: colors.mutedForeground }, selected: { color: colors.primary } }}
-      // iOS keeps its system bar (liquid glass on iOS 26); Android gets the page color.
-      backgroundColor={Platform.OS === 'android' ? colors.background : undefined}
-      indicatorColor={colors.muted}
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: { backgroundColor: colors.background },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.mutedForeground,
+        tabBarStyle: styles.bar,
+        tabBarLabelStyle: styles.label,
+      }}
     >
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }}
-          md="grid_view"
-        />
-        <NativeTabs.Trigger.Label>feed</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="challenge">
-        <NativeTabs.Trigger.Icon sf="calendar" md="calendar_month" />
-        <NativeTabs.Trigger.Label>challenge</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="post">
-        {/* The website's hand-drawn circle, always crimson: it is the main call to action. */}
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tab-post.png')}
-          renderingMode="original"
-        />
-        <NativeTabs.Trigger.Label>post</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="activity">
-        <NativeTabs.Trigger.Icon sf={{ default: 'bell', selected: 'bell.fill' }} md="notifications" />
-        <NativeTabs.Trigger.Label>activity</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Icon sf={{ default: 'person', selected: 'person.fill' }} md="person" />
-        <NativeTabs.Trigger.Label>profile</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'feed',
+          tabBarIcon: (props) => (
+            <TabIcon
+              name={{ ios: 'square.grid.2x2', android: 'grid_view' }}
+              selectedName={{ ios: 'square.grid.2x2.fill', android: 'grid_view' }}
+              {...props}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="challenge"
+        options={{
+          title: 'challenge',
+          tabBarIcon: (props) => (
+            <TabIcon name={{ ios: 'calendar', android: 'calendar_month' }} {...props} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="post"
+        options={{
+          title: 'post',
+          // The website's hand-drawn circle, always crimson: it is the main call to action.
+          tabBarIcon: () => (
+            <Image source={require('@/assets/images/tab-post.png')} style={styles.postIcon} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="activity"
+        options={{
+          title: 'activity',
+          tabBarIcon: (props) => (
+            <TabIcon
+              name={{ ios: 'bell', android: 'notifications' }}
+              selectedName={{ ios: 'bell.fill', android: 'notifications' }}
+              {...props}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'profile',
+          tabBarIcon: (props) => (
+            <TabIcon
+              name={{ ios: 'person', android: 'person' }}
+              selectedName={{ ios: 'person.fill', android: 'person' }}
+              {...props}
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  bar: {
+    backgroundColor: colors.background,
+    borderTopColor: colors.border,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  label: {
+    fontFamily: fonts.semibold,
+    fontSize: 11,
+  },
+  postIcon: {
+    width: 30,
+    height: 24,
+  },
+});
