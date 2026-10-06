@@ -6,9 +6,10 @@ import { Button } from '@/components/button';
 import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
-import { useChallenge } from '@/data/challenge';
+import { challengeToday, useChallenge, type Challenge } from '@/data/challenge';
 import { paintingsOf, useChallengeEntries } from '@/data/paintings';
 import { DayHeading } from '@/screens/challenge/day-heading';
+import { PromptCalendar } from '@/screens/challenge/prompt-calendar';
 import { TodayCard } from '@/screens/challenge/today-card';
 import { colors, spacing } from '@/theme';
 
@@ -20,10 +21,16 @@ const dayFormat = new Intl.DateTimeFormat('en-US', {
 });
 const formatDay = (date: string) => dayFormat.format(new Date(date)).toLowerCase();
 
+function todayNumber(challenge: Challenge): number | null {
+  const today = challengeToday(challenge);
+  return today.phase === 'during' ? today.prompt.day : null;
+}
+
 export function ChallengeScreen() {
   const challenge = useChallenge();
   const entries = useChallengeEntries();
   const [refreshing, setRefreshing] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
   const paintings = paintingsOf(entries.data);
   const prompts = challenge.data?.prompts;
 
@@ -50,7 +57,17 @@ export function ChallengeScreen() {
       <Text tone="muted">one prompt a day, all month long. paint along with everyone.</Text>
       <View style={styles.today}>
         {challenge.data ? (
-          <TodayCard challenge={challenge.data} startLabel={formatDay(challenge.data.startDate)} />
+          <>
+            <TodayCard challenge={challenge.data} startLabel={formatDay(challenge.data.startDate)} />
+            <Button
+              title={showCalendar ? 'hide calendar' : 'show calendar'}
+              onPress={() => setShowCalendar((shown) => !shown)}
+              style={styles.calendarToggle}
+            />
+            {showCalendar && (
+              <PromptCalendar challenge={challenge.data} today={todayNumber(challenge.data)} />
+            )}
+          </>
         ) : challenge.isPending ? (
           <ActivityIndicator
             color={colors.mutedForeground}
@@ -143,6 +160,10 @@ const styles = StyleSheet.create({
   },
   start: {
     alignSelf: 'flex-start',
+  },
+  calendarToggle: {
+    alignSelf: 'flex-start',
+    marginTop: spacing.md,
   },
   inline: {
     gap: spacing.sm,
