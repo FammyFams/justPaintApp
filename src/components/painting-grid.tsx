@@ -1,5 +1,6 @@
-import { FlashList } from '@shopify/flash-list';
-import type { ReactElement } from 'react';
+import { FlashList, type FlashListRef } from '@shopify/flash-list';
+import { useScrollToTop } from 'expo-router';
+import { useRef, type ReactElement, type RefObject } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { PaintingCard } from '@/components/painting-card';
@@ -40,6 +41,10 @@ export function PaintingGrid({
   refreshing = false,
   onRefresh,
 }: PaintingGridProps) {
+  const listRef = useRef<FlashListRef<Item>>(null);
+  // Tapping the open tab again scrolls back to the top (does nothing off the tabs).
+  useScrollToTop(listRef as RefObject<FlashListRef<Item>>);
+
   const items: Item[] = [];
   paintings.forEach((painting, i) => {
     if (sectionOf && renderSection && columns === 1) {
@@ -48,10 +53,14 @@ export function PaintingGrid({
     }
     items.push({ type: 'painting', painting });
   });
+  // Section headings float at the top while their paintings scroll under them.
+  const stickyHeaderIndices = items.flatMap((item, i) => (item.type === 'section' ? [i] : []));
 
   return (
     <FlashList
+      ref={listRef}
       data={items}
+      stickyHeaderIndices={stickyHeaderIndices}
       keyExtractor={(item) =>
         item.type === 'painting' ? item.painting.id : `section-${item.section}`
       }
@@ -102,9 +111,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xs,
     paddingVertical: spacing.sm,
   },
+  // Solid, so paintings don't show through while the heading floats.
   section: {
+    backgroundColor: colors.background,
     paddingHorizontal: spacing.xs,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
     paddingBottom: spacing.sm,
   },
 });
