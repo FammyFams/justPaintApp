@@ -24,7 +24,11 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
       <View style={styles.card}>
         <Text variant="headline">the challenge starts {startLabel}.</Text>
         <Text variant="subhead">come back then for the first prompt.</Text>
-        {action && <View style={styles.actions}>{action}</View>}
+        {action && (
+          <View style={styles.actions}>
+            <View style={styles.end}>{action}</View>
+          </View>
+        )}
       </View>
     );
   }
@@ -34,7 +38,11 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
       <View style={styles.card}>
         <Text variant="headline">the challenge has ended.</Text>
         <Text variant="subhead">thanks for painting along. every entry is below.</Text>
-        {action && <View style={styles.actions}>{action}</View>}
+        {action && (
+          <View style={styles.actions}>
+            <View style={styles.end}>{action}</View>
+          </View>
+        )}
       </View>
     );
   }
@@ -56,7 +64,7 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
           }
           style={styles.post}
         />
-        {action}
+        {action && <View style={styles.end}>{action}</View>}
       </View>
     </View>
   );
@@ -82,6 +90,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     marginTop: spacing.sm,
+  },
+  // Pushed to the right edge, on its own line too if the row wraps.
+  end: {
+    marginLeft: 'auto',
   },
   // The hand circle overhangs the button by 4pt.
   post: {
