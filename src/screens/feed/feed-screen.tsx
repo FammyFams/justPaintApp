@@ -80,6 +80,7 @@ export function FeedScreen() {
       <SafeAreaView edges={['top']} style={styles.safe}>
         <PaintingGrid
           paintings={paintings}
+          columns={1}
           header={header}
           empty={empty}
           footer={footer}
