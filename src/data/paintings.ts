@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { File as LocalFile } from 'expo-file-system';
 
-import { paintingImageUrl } from '@/data/images';
+import { paintingCardImageUrl, paintingImageUrl } from '@/data/images';
 import { api } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
 
@@ -22,6 +22,8 @@ export type Painting = {
   title: string;
   description: string;
   imageUrl: string;
+  // 640px copy of imageUrl, for cards.
+  cardImageUrl: string;
   aspect: 'portrait' | 'landscape' | 'square';
   // Null for guest posts, which have no account.
   artistId: string | null;
@@ -72,6 +74,7 @@ function toPainting(row: PaintingRow): Painting {
     title: row.title,
     description: row.description,
     imageUrl: paintingImageUrl(row.image_path),
+    cardImageUrl: paintingCardImageUrl(row.image_path),
     aspect: row.aspect,
     artistId: row.owner_id,
     authorName: row.owner_id

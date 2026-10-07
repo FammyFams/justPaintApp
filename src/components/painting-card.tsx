@@ -58,7 +58,7 @@ export function PaintingCard({ painting }: { painting: Painting }) {
         <GestureDetector gesture={pictureTaps}>
           <View collapsable={false}>
             <Image
-              source={{ uri: painting.imageUrl }}
+              source={{ uri: painting.cardImageUrl }}
               // Cards are recycled while scrolling; this stops an old painting showing.
               recyclingKey={painting.id}
               cachePolicy="disk"
