@@ -19,6 +19,7 @@ export function AuthForm({ title, intro, children }: AuthFormProps) {
     <PaperBackground>
       <ScrollView
         contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
         automaticallyAdjustKeyboardInsets

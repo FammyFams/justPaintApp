@@ -17,7 +17,7 @@ export function SignedOutScreen({ title, note }: SignedOutScreenProps) {
   return (
     <PaperBackground>
       <SafeAreaView edges={['top']} style={styles.safe}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.heading}>
             <Text variant="display" accessibilityRole="header" style={styles.center}>
               {title}

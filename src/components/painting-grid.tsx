@@ -59,6 +59,7 @@ export function PaintingGrid({
   return (
     <FlashList
       ref={listRef}
+      showsVerticalScrollIndicator={false}
       data={items}
       stickyHeaderIndices={stickyHeaderIndices}
       keyExtractor={(item) =>

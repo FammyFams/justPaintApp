@@ -59,6 +59,7 @@ export function PaintingScreen() {
       {painting.data ? (
         <ScrollView
           contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
           // Room for the keyboard under the comment box (iOS; Android resizes).
           automaticallyAdjustKeyboardInsets
           keyboardShouldPersistTaps="handled"

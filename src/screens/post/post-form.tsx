@@ -78,6 +78,7 @@ export function PostForm() {
       <SafeAreaView edges={['top']} style={styles.safe}>
         <ScrollView
           contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           automaticallyAdjustKeyboardInsets
