@@ -8,7 +8,11 @@
     "scheme": "justpaint",
     "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/expo.icon",
+      "icon": {
+        "light": "./assets/images/icon.png",
+        "dark": "./assets/images/ios-icon-dark.png",
+        "tinted": "./assets/images/ios-icon-tinted.png"
+      },
       "bundleIdentifier": "art.justpaint.app",
       "supportsTablet": false,
       "config": {
@@ -20,7 +24,6 @@
       "adaptiveIcon": {
         "backgroundColor": "#fbf5f3",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
@@ -41,7 +44,7 @@
         {
           "backgroundColor": "#fbf5f3",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 150
         }
       ],
       "expo-secure-store",
