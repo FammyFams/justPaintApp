@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
@@ -26,14 +26,18 @@ export function useHeartedIds() {
 
 type HeartAnswer = { hearted: boolean; count: number };
 
-// One painting's heart: whether you hearted it, its count, and a toggle that
-// shows the change at once and corrects the count when the website answers.
-// Signed out, the toggle opens the "sign in to post, heart and comment" sheet.
+// One painting's heart: whether you hearted it, its count, and changes that
+// show at once and take the website's count when it answers. Signed out,
+// changing it opens the "sign in to post, heart and comment" sheet.
 export function useHeart(painting: Painting) {
   const queryClient = useQueryClient();
   const { userId } = useSession();
   const heartedIds = useHeartedIds();
   const hearted = heartedIds.data?.includes(painting.id) ?? false;
+  // Shared by every heart for this painting (the card's button and its
+  // double tap), so only one change is ever on its way.
+  const mutationKey = ['heart', painting.id];
+  const saving = useIsMutating({ mutationKey }) > 0;
 
   const show = (on: boolean, count: number) => {
     queryClient.setQueryData<string[]>(heartsKey(userId), (ids = []) => [
@@ -44,6 +48,7 @@ export function useHeart(painting: Painting) {
   };
 
   const mutation = useMutation({
+    mutationKey,
     mutationFn: (on: boolean) =>
       api<HeartAnswer>(`hearts/${painting.id}`, { method: 'PUT', body: { hearted: on } }),
     onMutate: (on) => {
@@ -58,19 +63,27 @@ export function useHeart(painting: Painting) {
     },
   });
 
-  const toggle = () => {
+  // False when signed out (the sheet opens instead).
+  const change = (on: boolean): boolean => {
     if (!userId) {
       router.push('/require-account');
-      return;
+      return false;
     }
     // One change at a time (answers could arrive out of order), and not
     // before the hearts load, or that answer would overwrite this one.
-    if (mutation.isPending || heartedIds.isPending) return;
-    const on = !hearted;
+    if (saving || heartedIds.isPending || on === hearted) return true;
     if (on) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     else Haptics.selectionAsync();
     mutation.mutate(on);
+    return true;
   };
 
-  return { hearted, count: painting.heartCount, toggle, saving: mutation.isPending };
+  return {
+    hearted,
+    count: painting.heartCount,
+    saving,
+    toggle: () => change(!hearted),
+    // A double tap on the picture: hearts it, never takes a heart back.
+    heart: () => change(true),
+  };
 }
