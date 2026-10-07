@@ -1,6 +1,6 @@
 import { PaperBackground } from '@/components/paper-background';
 import { useSession } from '@/data/account';
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { ActivityList } from '@/screens/activity/activity-list';
 import { SignedOutScreen } from '@/screens/signed-out/signed-out-screen';
 
 export function ActivityScreen() {
@@ -14,6 +14,5 @@ export function ActivityScreen() {
       />
     );
   }
-  // A13 builds the activity list.
-  return <PlaceholderScreen title="activity" />;
+  return <ActivityList />;
 }

@@ -3,11 +3,14 @@ import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { TabIcon } from '@/components/tab-icon';
+import { useUnreadCount } from '@/data/notifications';
 import { colors, fonts } from '@/theme';
 
 // JS tabs, not NativeTabs: on iOS 26 the native bar is always see-through
 // Liquid Glass. This one is flat and solid, like the website.
 export default function TabLayout() {
+  // New hearts and comments, on the Activity tab (signed in only).
+  const unread = useUnreadCount().data ?? 0;
   return (
     <Tabs
       screenOptions={{
@@ -55,6 +58,9 @@ export default function TabLayout() {
         name="activity"
         options={{
           title: 'activity',
+          tabBarBadge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined,
+          tabBarBadgeStyle: styles.badge,
+          tabBarAccessibilityLabel: unread > 0 ? `activity, ${unread} new` : 'activity',
           tabBarIcon: (props) => (
             <TabIcon
               name={{ ios: 'bell', android: 'notifications' }}
@@ -90,6 +96,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   label: {
+    fontFamily: fonts.semibold,
+    fontSize: 11,
+  },
+  badge: {
+    backgroundColor: colors.primary,
+    color: colors.primaryForeground,
     fontFamily: fonts.semibold,
     fontSize: 11,
   },
