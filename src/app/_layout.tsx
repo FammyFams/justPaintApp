@@ -73,6 +73,10 @@ function RootStack() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="painting/[id]" options={pageHeader} />
       <Stack.Screen name="artist/[name]" options={pageHeader} />
+      {/* Only while signed in: logging out or deleting the account closes it. */}
+      <Stack.Protected guard={signedIn}>
+        <Stack.Screen name="settings" options={pageHeader} />
+      </Stack.Protected>
       {/* Only while signed out: signing in removes them, closing whichever is open. */}
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />

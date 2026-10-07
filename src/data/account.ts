@@ -62,13 +62,21 @@ export type Me = {
   joinedAt: string | null;
 };
 
+const profileKey = (userId: string | null) => [...ME_KEY, 'profile', userId];
+
 // The signed-in person's profile, from the website (W1's /me). It also proves
 // the sign-in token works.
 export function useMe() {
   const { userId } = useSession();
   return useQuery({
-    queryKey: [...ME_KEY, 'profile', userId],
-    queryFn: async () => (await api<{ user: Me }>('me')).user,
+    queryKey: profileKey(userId),
+    queryFn: async () => {
+      const { user } = await api<{ user: Me }>('me');
+      // No profile: the account was deleted (on the website or another phone)
+      // and this token hasn't run out yet (it can last an hour). Sign out here too.
+      if (!user.joinedAt) await supabase.auth.signOut({ scope: 'local' });
+      return user;
+    },
     enabled: !!userId,
   });
 }
@@ -170,6 +178,55 @@ export function useResetPassword() {
         redirectTo: `${env.siteUrl}/auth/confirm?next=/reset-password`,
       });
       if (error) throw new Error(authMessage(error));
+    },
+  });
+}
+
+// The website's limits (lib/validations there): names 2 to 30 characters of
+// letters, numbers, spaces, dots, dashes and underscores; bios up to 280.
+export const NAME_MAX = 30;
+export const BIO_MAX = 280;
+
+type ProfileValues = { displayName: string; bio: string };
+
+// Name and bio, through the website (W5), which checks the name rules and
+// whether someone else has it. Everything showing the old name reloads.
+export function useUpdateProfile() {
+  const { userId } = useSession();
+  return useMutation({
+    mutationFn: async (values: ProfileValues) => {
+      const displayName = values.displayName.trim();
+      const bio = values.bio.trim();
+      if (displayName.length < 2) throw new Error('use at least 2 characters for your name.');
+      if (bio.length > BIO_MAX) throw new Error(`keep your bio under ${BIO_MAX} characters.`);
+      const answer = await api<{ profile: ProfileValues }>('profile', {
+        method: 'PATCH',
+        body: { displayName, bio },
+      });
+      return answer.profile;
+    },
+    onSuccess: (profile) => {
+      queryClient.setQueryData<Me>(profileKey(userId), (me) => me && { ...me, ...profile });
+      for (const key of ['paintings', 'artists', 'comments']) {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      }
+    },
+  });
+}
+
+// Deletes the account and everything in it through the website (W5), then
+// signs out here. Signing out closes Settings (it's only there while signed in).
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: async () => {
+      await api<{ deleted: true }>('account', { method: 'DELETE' });
+      await supabase.auth.signOut({ scope: 'local' });
+    },
+    onSuccess: () => {
+      // Their paintings and comments are gone from every list.
+      for (const key of ['paintings', 'artists', 'comments']) {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      }
     },
   });
 }
