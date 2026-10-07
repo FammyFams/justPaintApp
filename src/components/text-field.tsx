@@ -35,7 +35,7 @@ export function TextField({ label, hint, onFocus, onBlur, ref, ...props }: TextF
           setFocused(false);
           onBlur?.(event);
         }}
-        style={[styles.input, focused && styles.focused]}
+        style={[styles.input, props.multiline && styles.multiline, focused && styles.focused]}
         {...props}
       />
     </View>
@@ -60,6 +60,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     fontSize: 17,
     color: colors.foreground,
+  },
+  // About three lines tall, growing as they type.
+  multiline: {
+    minHeight: touchTarget * 2,
+    textAlignVertical: 'top',
   },
   focused: {
     borderColor: colors.foreground,

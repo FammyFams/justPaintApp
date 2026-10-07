@@ -4,9 +4,10 @@ import { Button } from '@/components/button';
 import { Text } from '@/components/text';
 import { useComments } from '@/data/comments';
 import { formatDate } from '@/lib/dates';
+import { CommentBox } from '@/screens/painting/comment-box';
 import { colors, fonts, spacing } from '@/theme';
 
-// Read-only for now; A11 adds the comment box.
+// Oldest first, like a conversation, with the comment box at the end.
 export function CommentList({ paintingId }: { paintingId: string }) {
   const comments = useComments(paintingId);
 
@@ -43,6 +44,8 @@ export function CommentList({ paintingId }: { paintingId: string }) {
           </View>
         ))
       )}
+
+      <CommentBox paintingId={paintingId} />
     </View>
   );
 }

@@ -56,7 +56,13 @@ export function PaintingScreen() {
       />
 
       {painting.data ? (
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          // Room for the keyboard under the comment box (iOS; Android resizes).
+          automaticallyAdjustKeyboardInsets
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+        >
           <ZoomableImage
             uri={painting.data.imageUrl}
             initialAspectRatio={aspectRatios[painting.data.aspect]}
