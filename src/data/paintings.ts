@@ -1,11 +1,14 @@
 import {
   useInfiniteQuery,
+  useMutation,
   useQuery,
   useQueryClient,
   type InfiniteData,
 } from '@tanstack/react-query';
+import { File as LocalFile } from 'expo-file-system';
 
 import { paintingImageUrl } from '@/data/images';
+import { api } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
 
 export type Tag = {
@@ -271,5 +274,78 @@ export function useTags() {
     },
     // Tags rarely change.
     staleTime: 60 * 60 * 1000,
+  });
+}
+
+// Same limits as the website's upload form; the website checks them again.
+export const TITLE_MAX = 80;
+export const DESCRIPTION_MAX = 600;
+export const TAGS_MAX = 5;
+
+export type NewPainting = {
+  // A JPEG already shrunk to 1600px (screens/post/pick-photo.ts).
+  photo: { uri: string; aspect: Painting['aspect'] } | null;
+  title: string;
+  description: string;
+  tags: string[];
+  // The October challenge day it's for, or null.
+  challengeDay: number | null;
+};
+
+// Quick checks so an incomplete form doesn't need a round trip (and doesn't
+// use up one of the 5 posts per 16 hours).
+function checkNewPainting(values: NewPainting): asserts values is NewPainting & {
+  photo: NonNullable<NewPainting['photo']>;
+} {
+  if (!values.photo) throw new Error('add a photo of your painting.');
+  if (values.title.trim().length < 2) throw new Error('give it a title.');
+  if (!values.description.trim()) throw new Error('add a description.');
+  if (values.tags.length === 0) throw new Error('pick at least one tag.');
+}
+
+// Posts through the website (W6): 4 MB at most, re-encoded there with no
+// metadata, 5 posts per 16 hours. Resolves to the new painting's id; every
+// list reloads so it shows at the top.
+export function usePostPainting() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (values: NewPainting): Promise<string> => {
+      checkNewPainting(values);
+      const form = new FormData();
+      // The global fetch is expo/fetch, which takes an expo-file-system File
+      // (a Blob, typed from its .jpg name), not React Native's { uri } parts.
+      form.append('image', new LocalFile(values.photo.uri));
+      form.append('title', values.title.trim());
+      form.append('description', values.description.trim());
+      for (const tag of values.tags) form.append('tags', tag);
+      form.append('aspect', values.photo.aspect);
+      // Confirmed by posting (the line above the button), as at sign-up.
+      form.append('agreedToTerms', 'true');
+      if (values.challengeDay) {
+        form.append('octoberChallenge', 'true');
+        form.append('octoberDay', String(values.challengeDay));
+      }
+      const answer = await api<{ painting: { id: string } }>('paintings', {
+        method: 'POST',
+        body: form,
+      });
+      return answer.painting.id;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['paintings'] }),
+  });
+}
+
+// Deletes one of your own paintings, with its hearts and comments. Every list
+// reloads; the painting's own page is left alone so it doesn't flash "isn't
+// here anymore" while the screen goes back.
+export function useDeletePainting() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api<{ deleted: true }>(`paintings/${id}`, { method: 'DELETE' }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: ['paintings'],
+        predicate: (query) => query.queryKey[1] !== 'detail',
+      }),
   });
 }

@@ -1,6 +1,6 @@
 import { PaperBackground } from '@/components/paper-background';
 import { useSession } from '@/data/account';
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { PostForm } from '@/screens/post/post-form';
 import { SignedOutScreen } from '@/screens/signed-out/signed-out-screen';
 
 export function PostScreen() {
@@ -14,6 +14,5 @@ export function PostScreen() {
       />
     );
   }
-  // A12 builds the post form.
-  return <PlaceholderScreen title="post" />;
+  return <PostForm />;
 }

@@ -20,6 +20,7 @@ import { artistHandle } from '@/lib/artist-url';
 import { formatDate } from '@/lib/dates';
 import { env } from '@/lib/env';
 import { CommentList } from '@/screens/painting/comment-list';
+import { DeletePaintingButton } from '@/screens/painting/delete-painting-button';
 import { ZoomableImage } from '@/components/zoomable-image';
 import { colors, fonts, spacing, touchTarget } from '@/theme';
 
@@ -124,6 +125,7 @@ export function PaintingScreen() {
             )}
 
             <CommentList paintingId={id} />
+            <DeletePaintingButton painting={painting.data} />
           </View>
         </ScrollView>
       ) : painting.isPending ? (

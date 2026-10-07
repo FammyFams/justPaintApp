@@ -17,6 +17,7 @@ export class ApiError extends Error {
 
 type ApiInit = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  // Sent as JSON, or as multipart when it's FormData (a photo upload).
   body?: unknown;
 };
 
@@ -26,16 +27,19 @@ export async function api<T>(path: string, { method = 'GET', body }: ApiInit = {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
 
+  const sendJson = body !== undefined && !(body instanceof FormData);
+
   let response: Response;
   try {
     response = await fetch(`${env.siteUrl}/api/app/v1/${path}`, {
       method,
       headers: {
         Accept: 'application/json',
-        ...(body !== undefined && { 'Content-Type': 'application/json' }),
+        // FormData sets its own multipart Content-Type, with the boundary.
+        ...(sendJson && { 'Content-Type': 'application/json' }),
         ...(token && { Authorization: `Bearer ${token}` }),
       },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: sendJson ? JSON.stringify(body) : (body as FormData | undefined),
     });
   } catch {
     throw new ApiError(0, 'network', "couldn't reach justpaint.art. check your connection.");
