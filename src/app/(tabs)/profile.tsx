@@ -1,5 +1,3 @@
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { ProfileScreen } from '@/screens/profile/profile-screen';
 
-export default function ProfileTab() {
-  return <PlaceholderScreen title="profile" />;
-}
+export default ProfileScreen;

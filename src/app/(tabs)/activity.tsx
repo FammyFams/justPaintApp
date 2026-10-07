@@ -1,5 +1,3 @@
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { ActivityScreen } from '@/screens/activity/activity-screen';
 
-export default function ActivityTab() {
-  return <PlaceholderScreen title="activity" />;
-}
+export default ActivityScreen;

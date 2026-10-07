@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { useSession } from '@/data/account';
 import { queryClient } from '@/lib/query-client';
 import { colors, fonts } from '@/theme';
 
@@ -23,6 +24,14 @@ const pageHeader = {
   headerTintColor: colors.foreground,
   headerStyle: { backgroundColor: colors.background },
   headerShadowVisible: false,
+} as const;
+
+// "sign in to post, heart and comment", sized to its content.
+const accountSheet = {
+  presentation: 'formSheet',
+  sheetAllowedDetents: 'fitToContents',
+  sheetGrabberVisible: true,
+  contentStyle: { backgroundColor: colors.card },
 } as const;
 
 export default function RootLayout() {
@@ -44,16 +53,31 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-          }}
-        >
-          <Stack.Screen name="painting/[id]" options={pageHeader} />
-          <Stack.Screen name="artist/[name]" options={pageHeader} />
-        </Stack>
+        <RootStack />
       </QueryClientProvider>
     </GestureHandlerRootView>
+  );
+}
+
+// Inside the query provider, since it reads the session.
+function RootStack() {
+  const { signedIn } = useSession();
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
+      {/* First, so it's what opens when the launch link names no page. */}
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="painting/[id]" options={pageHeader} />
+      <Stack.Screen name="artist/[name]" options={pageHeader} />
+      {/* Only while signed out: signing in removes them, closing whichever is open. */}
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="require-account" options={accountSheet} />
+      </Stack.Protected>
+    </Stack>
   );
 }

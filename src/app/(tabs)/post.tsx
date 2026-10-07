@@ -1,5 +1,3 @@
-import { PlaceholderScreen } from '@/screens/placeholder/placeholder-screen';
+import { PostScreen } from '@/screens/post/post-screen';
 
-export default function PostTab() {
-  return <PlaceholderScreen title="post" />;
-}
+export default PostScreen;
