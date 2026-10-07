@@ -4,6 +4,7 @@ import { useRef, type ReactElement, type RefObject } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { PaintingCard } from '@/components/painting-card';
+import { useBlockedIds } from '@/data/blocks';
 import type { Painting } from '@/data/paintings';
 import { colors, spacing } from '@/theme';
 
@@ -45,11 +46,17 @@ export function PaintingGrid({
   // Tapping the open tab again scrolls back to the top (does nothing off the tabs).
   useScrollToTop(listRef as RefObject<FlashListRef<Item>>);
 
+  // Blocked artists' paintings are hidden from you everywhere.
+  const blocked = useBlockedIds();
+  const visible = blocked.size
+    ? paintings.filter((painting) => !painting.artistId || !blocked.has(painting.artistId))
+    : paintings;
+
   const items: Item[] = [];
-  paintings.forEach((painting, i) => {
+  visible.forEach((painting, i) => {
     if (sectionOf && renderSection && columns === 1) {
       const section = sectionOf(painting);
-      if (i === 0 || section !== sectionOf(paintings[i - 1])) items.push({ type: 'section', section });
+      if (i === 0 || section !== sectionOf(visible[i - 1])) items.push({ type: 'section', section });
     }
     items.push({ type: 'painting', painting });
   });

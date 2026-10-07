@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
@@ -74,6 +75,7 @@ export function SettingsScreen() {
 
         <Section title="account">
           <Text variant="subhead">signed in as {session?.user.email}</Text>
+          <TextLink title="blocked artists" role="link" onPress={() => router.push('/blocked')} />
           <AccountActions />
         </Section>
       </ScrollView>

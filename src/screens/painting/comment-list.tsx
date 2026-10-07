@@ -1,20 +1,31 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { ReportBlockMenu } from '@/components/report-block-menu';
 import { Text } from '@/components/text';
+import { useBlockedIds } from '@/data/blocks';
 import { useComments } from '@/data/comments';
 import { formatDate } from '@/lib/dates';
 import { CommentBox } from '@/screens/painting/comment-box';
 import { colors, fonts, spacing } from '@/theme';
 
+type CommentListProps = {
+  paintingId: string;
+  // For reports: a comment is reported on its painting.
+  paintingTitle: string;
+};
+
 // Oldest first, like a conversation, with the comment box at the end.
-export function CommentList({ paintingId }: { paintingId: string }) {
+// Blocked artists' comments are left out.
+export function CommentList({ paintingId, paintingTitle }: CommentListProps) {
   const comments = useComments(paintingId);
+  const blocked = useBlockedIds();
+  const shown = comments.data?.filter((comment) => !blocked.has(comment.authorId));
 
   return (
     <View style={styles.section}>
       <Text variant="headline" accessibilityRole="header">
-        comments{comments.data && comments.data.length > 0 ? ` (${comments.data.length})` : ''}
+        comments{shown && shown.length > 0 ? ` (${shown.length})` : ''}
       </Text>
 
       {comments.isPending ? (
@@ -28,19 +39,30 @@ export function CommentList({ paintingId }: { paintingId: string }) {
           <Text variant="subhead">couldn&apos;t load the comments.</Text>
           <Button title="try again" onPress={() => comments.refetch()} />
         </View>
-      ) : comments.data.length === 0 ? (
+      ) : !shown || shown.length === 0 ? (
         <Text variant="subhead">no comments yet.</Text>
       ) : (
-        comments.data.map((comment) => (
-          <View key={comment.id} style={styles.comment}>
-            <Text variant="caption">
-              <Text variant="caption" tone="default" style={styles.author}>
-                {comment.authorName}
+        shown.map((comment) => (
+          <View key={comment.id} style={styles.row}>
+            <View style={styles.comment}>
+              <Text variant="caption">
+                <Text variant="caption" tone="default" style={styles.author}>
+                  {comment.authorName}
+                </Text>
+                {'  '}
+                {formatDate(comment.createdAt)}
               </Text>
-              {'  '}
-              {formatDate(comment.createdAt)}
-            </Text>
-            <Text>{comment.body}</Text>
+              <Text>{comment.body}</Text>
+            </View>
+            <ReportBlockMenu
+              label={`more options for ${comment.authorName}'s comment`}
+              report={{
+                paintingId,
+                title: paintingTitle,
+                about: `comment by ${comment.authorName}: "${comment.body}"`,
+              }}
+              artist={{ id: comment.authorId, name: comment.authorName }}
+            />
           </View>
         ))
       )}
@@ -64,7 +86,13 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     alignItems: 'flex-start',
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+  },
   comment: {
+    flex: 1,
     gap: 2,
   },
   author: {

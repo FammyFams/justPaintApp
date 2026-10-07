@@ -10,11 +10,14 @@ import {
   View,
 } from 'react-native';
 
+import { BlockedNotice } from '@/components/blocked-notice';
 import { Button } from '@/components/button';
 import { HeartButton } from '@/components/heart-button';
 import { PaperBackground } from '@/components/paper-background';
+import { ReportBlockMenu } from '@/components/report-block-menu';
 import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
+import { useBlockedIds } from '@/data/blocks';
 import { aspectRatios, usePainting } from '@/data/paintings';
 import { artistHandle } from '@/lib/artist-url';
 import { formatDate } from '@/lib/dates';
@@ -27,6 +30,10 @@ import { colors, fonts, spacing, touchTarget } from '@/theme';
 export function PaintingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const painting = usePainting(id);
+  const blocked = useBlockedIds();
+  const artist = painting.data?.artistId
+    ? { id: painting.data.artistId, name: painting.data.authorName }
+    : null;
 
   const share = () => {
     const url = `${env.siteUrl}/painting/${id}`;
@@ -39,24 +46,35 @@ export function PaintingScreen() {
       <Stack.Screen
         options={{
           headerRight: () => (
-            <Pressable
-              onPress={share}
-              accessibilityRole="button"
-              accessibilityLabel="share"
-              hitSlop={8}
-              style={styles.headerButton}
-            >
-              <SymbolView
-                name={{ ios: 'square.and.arrow.up', android: 'share' }}
-                tintColor={colors.foreground}
-                size={22}
-              />
-            </Pressable>
+            <View style={styles.headerButtons}>
+              <Pressable
+                onPress={share}
+                accessibilityRole="button"
+                accessibilityLabel="share"
+                hitSlop={8}
+                style={styles.headerButton}
+              >
+                <SymbolView
+                  name={{ ios: 'square.and.arrow.up', android: 'share' }}
+                  tintColor={colors.foreground}
+                  size={22}
+                />
+              </Pressable>
+              {painting.data && (
+                <ReportBlockMenu
+                  label={`more options for ${painting.data.title}`}
+                  report={{ paintingId: id, title: painting.data.title }}
+                  artist={artist}
+                />
+              )}
+            </View>
           ),
         }}
       />
 
-      {painting.data ? (
+      {painting.data && artist && blocked.has(artist.id) ? (
+        <BlockedNotice artist={artist} />
+      ) : painting.data ? (
         <ScrollView
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
@@ -125,7 +143,7 @@ export function PaintingScreen() {
               </View>
             )}
 
-            <CommentList paintingId={id} />
+            <CommentList paintingId={id} paintingTitle={painting.data.title} />
             <DeletePaintingButton painting={painting.data} />
           </View>
         </ScrollView>
@@ -152,6 +170,10 @@ export function PaintingScreen() {
 }
 
 const styles = StyleSheet.create({
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   headerButton: {
     minWidth: touchTarget,
     minHeight: touchTarget,

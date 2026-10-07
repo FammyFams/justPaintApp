@@ -1,12 +1,15 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { BlockedNotice } from '@/components/blocked-notice';
 import { Button } from '@/components/button';
 import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
+import { ReportBlockMenu } from '@/components/report-block-menu';
 import { Text } from '@/components/text';
 import { useArtist } from '@/data/artists';
+import { useBlockedIds } from '@/data/blocks';
 import { useArtistPaintings } from '@/data/paintings';
 import { colors, spacing } from '@/theme';
 
@@ -16,6 +19,7 @@ export function ArtistScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const artist = useArtist(name);
   const paintings = useArtistPaintings(artist.data?.id);
+  const blocked = useBlockedIds();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -52,6 +56,26 @@ export function ArtistScreen() {
     );
   }
 
+  // Artists are blocked here; they're reported through one of their paintings.
+  const target = { id: artist.data.id, name: artist.data.displayName };
+  const menu = (
+    <Stack.Screen
+      options={{
+        headerRight: () => (
+          <ReportBlockMenu label={`more options for ${target.name}`} artist={target} />
+        ),
+      }}
+    />
+  );
+  if (blocked.has(target.id)) {
+    return (
+      <PaperBackground>
+        {menu}
+        <BlockedNotice artist={target} />
+      </PaperBackground>
+    );
+  }
+
   const count = paintings.data?.length;
   const header = (
     <View style={styles.header}>
@@ -83,6 +107,7 @@ export function ArtistScreen() {
 
   return (
     <PaperBackground>
+      {menu}
       <PaintingGrid
         paintings={paintings.data ?? []}
         columns={2}
