@@ -195,6 +195,30 @@ function findCachedPainting(
   return undefined;
 }
 
+// Changes one painting in every list and page that has it cached, so a new
+// heart count shows on the feed card and the painting page at once.
+export function updateCachedPainting(
+  queryClient: ReturnType<typeof useQueryClient>,
+  id: string,
+  update: (painting: Painting) => Painting,
+) {
+  const swap = (list: Painting[]) =>
+    list.some((painting) => painting.id === id)
+      ? list.map((painting) => (painting.id === id ? update(painting) : painting))
+      : list;
+
+  queryClient.setQueriesData<unknown>({ queryKey: ['paintings'] }, (data: unknown) => {
+    if (!data || typeof data !== 'object') return data;
+    if (Array.isArray(data)) return swap(data);
+    if ('pages' in data) {
+      const paged = data as InfiniteData<FeedPage, unknown>;
+      return { ...paged, pages: paged.pages.map((page) => ({ ...page, paintings: swap(page.paintings) })) };
+    }
+    const painting = data as Painting;
+    return painting.id === id ? update(painting) : data;
+  });
+}
+
 // Null when there is no such painting (deleted, or a malformed id in a link).
 async function fetchPainting(id: string): Promise<Painting | null> {
   const { data, error } = await supabase

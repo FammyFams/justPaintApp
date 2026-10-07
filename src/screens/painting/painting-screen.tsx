@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { Button } from '@/components/button';
+import { HeartButton } from '@/components/heart-button';
 import { PaperBackground } from '@/components/paper-background';
 import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
@@ -104,21 +105,7 @@ export function PaintingScreen() {
               <Text variant="caption">{formatDate(painting.data.createdAt)}</Text>
             </View>
 
-            {/* A10 turns this into the heart button. */}
-            <View
-              style={styles.hearts}
-              accessible
-              accessibilityLabel={`${painting.data.heartCount} ${painting.data.heartCount === 1 ? 'heart' : 'hearts'}`}
-            >
-              <SymbolView
-                name={{ ios: 'heart.fill', android: 'favorite' }}
-                tintColor={colors.primary}
-                size={18}
-              />
-              <Text variant="subhead" tone="default">
-                {painting.data.heartCount} {painting.data.heartCount === 1 ? 'heart' : 'hearts'}
-              </Text>
-            </View>
+            <HeartButton painting={painting.data} />
 
             {painting.data.description ? <Text>{painting.data.description}</Text> : null}
 
@@ -182,11 +169,6 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.6,
-  },
-  hearts: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
   },
   tags: {
     flexDirection: 'row',
