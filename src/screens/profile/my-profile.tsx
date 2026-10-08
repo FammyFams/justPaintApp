@@ -15,7 +15,8 @@ import { colors, spacing } from '@/theme';
 const joinedFormat = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
 
 // The signed-in Profile tab: your page as others see it (the artist page, plus
-// your picture), the way into settings, then everything you've posted.
+// your picture), the way into settings (labelled edit profile), then everything
+// you've posted.
 export function MyProfile() {
   const { userId } = useSession();
   const me = useMe();
@@ -58,16 +59,25 @@ export function MyProfile() {
 
   const header = (
     <View style={styles.header}>
-      <Avatar name={name} url={me.data.avatarUrl} />
-      <Text variant="largeTitle" accessibilityRole="header" style={styles.name}>
-        {name}
-      </Text>
+      <View style={styles.identity}>
+        <Avatar name={name} url={me.data.avatarUrl} />
+        {/* Long names shrink to stay on the picture's line. */}
+        <Text
+          variant="largeTitle"
+          accessibilityRole="header"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={styles.name}
+        >
+          {name}
+        </Text>
+      </View>
       <Text variant="subhead">{facts.join(' · ')}</Text>
       {me.data.bio ? <Text style={styles.bio}>{me.data.bio}</Text> : null}
       {(me.isRefetchError || paintings.isRefetchError) && (
         <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
       )}
-      <Button title="settings" onPress={() => router.push('/settings')} style={styles.settings} />
+      <Button title="edit profile" onPress={() => router.push('/settings')} style={styles.settings} />
     </View>
   );
 
@@ -114,8 +124,14 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
   },
+  identity: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.sm,
+  },
   name: {
-    marginTop: spacing.sm,
+    flex: 1,
   },
   bio: {
     paddingTop: spacing.sm,
