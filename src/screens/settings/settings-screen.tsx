@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import type { ReactNode } from 'react';
-import { ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
 import { PaperBackground } from '@/components/paper-background';
@@ -13,15 +13,6 @@ import { AccountActions } from '@/screens/settings/account-actions';
 import { ProfileForm } from '@/screens/settings/profile-form';
 import { colors, spacing } from '@/theme';
 
-// The address on the website's terms and privacy pages. W11 adds a support
-// page (justpaint.art/support); this can open that instead once it's live.
-const SUPPORT_EMAIL = 'thewcookie@gmail.com';
-
-function emailSupport() {
-  Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=justpaint%20app`).catch(() =>
-    Alert.alert('email us', SUPPORT_EMAIL),
-  );
-}
 
 // Pushed from the Profile tab, only while signed in.
 export function SettingsScreen() {
@@ -70,7 +61,11 @@ export function SettingsScreen() {
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/privacy`)}
           />
-          <TextLink title="support" role="link" onPress={emailSupport} />
+          <TextLink
+            title="support"
+            role="link"
+            onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/support`)}
+          />
         </Section>
 
         <Section title="account">

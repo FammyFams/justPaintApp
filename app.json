@@ -17,7 +17,11 @@
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "associatedDomains": [
+        "applinks:justpaint.art",
+        "webcredentials:justpaint.art"
+      ]
     },
     "android": {
       "package": "art.justpaint.app",

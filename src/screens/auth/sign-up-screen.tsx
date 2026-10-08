@@ -69,7 +69,8 @@ export function SignUpScreen() {
         onChangeText={setEmail}
         placeholder="you@example.com"
         autoComplete="email"
-        textContentType="emailAddress"
+        // "username" so iOS offers the login saved for justpaint.art.
+        textContentType="username"
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
