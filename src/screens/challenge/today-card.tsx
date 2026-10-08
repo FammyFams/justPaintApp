@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from '@/components/text';
 import { challengeToday, type Challenge } from '@/data/challenge';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { fonts, spacing } from '@/theme';
 
 type TodayCardProps = {
   challenge: Challenge;
@@ -43,13 +43,9 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
 }
 
 const styles = StyleSheet.create({
+  // On the page itself, no box (2026-10-07).
   card: {
     gap: spacing.xs,
-    backgroundColor: colors.card,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius,
-    padding: spacing.md,
   },
   label: {
     fontFamily: fonts.semibold,

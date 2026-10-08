@@ -20,14 +20,16 @@ type PaintingCardProps = {
   // Edge to edge, for one-column lists. Otherwise the picture keeps rounded
   // corners and the words line up with it (two-column walls).
   bleed?: boolean;
+  // Off on an artist's own wall, where every painting is theirs.
+  showArtist?: boolean;
 };
 
-export function PaintingCard({ painting, bleed }: PaintingCardProps) {
+export function PaintingCard({ painting, bleed, showArtist = true }: PaintingCardProps) {
   const guest = !painting.artistId;
   const tags = painting.tags.slice(0, 3);
   // "Dasha · watercolor, gouache": one plain line under the title.
   const details = [
-    `${painting.authorName}${guest ? ' (guest)' : ''}`,
+    showArtist && `${painting.authorName}${guest ? ' (guest)' : ''}`,
     tags.map((tag) => tag.name.toLowerCase()).join(', '),
   ].filter(Boolean);
   const heart = useHeart(painting);
@@ -94,9 +96,11 @@ export function PaintingCard({ painting, bleed }: PaintingCardProps) {
           <Text variant="headline" numberOfLines={1}>
             {painting.title}
           </Text>
-          <Text variant="subhead" numberOfLines={1}>
-            {details.join(' · ')}
-          </Text>
+          {details.length > 0 && (
+            <Text variant="subhead" numberOfLines={1}>
+              {details.join(' · ')}
+            </Text>
+          )}
         </Pressable>
       </View>
       {/* Beside the link, not inside it, so screen readers reach it on its own. */}

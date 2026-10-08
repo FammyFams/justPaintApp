@@ -17,6 +17,8 @@ type PaintingGridProps = {
   // 1: one post per row, like a feed. 2: packed like a wall, each card dropping
   // into the shorter column.
   columns?: 1 | 2;
+  // Off on an artist's page, where every painting is theirs.
+  showArtist?: boolean;
   // One column only: a heading row goes in before each run of paintings that
   // share a section (e.g. a challenge day). Expects them already in that order.
   sectionOf?: (painting: Painting) => string | number | null;
@@ -33,6 +35,7 @@ type PaintingGridProps = {
 export function PaintingGrid({
   paintings,
   columns = 2,
+  showArtist = true,
   sectionOf,
   renderSection,
   header,
@@ -79,7 +82,7 @@ export function PaintingGrid({
           <View style={styles.section}>{renderSection?.(item.section)}</View>
         ) : (
           <View style={oneColumn ? styles.row : styles.cell}>
-            <PaintingCard painting={item.painting} bleed={oneColumn} />
+            <PaintingCard painting={item.painting} bleed={oneColumn} showArtist={showArtist} />
           </View>
         )
       }

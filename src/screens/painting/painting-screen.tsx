@@ -15,7 +15,6 @@ import { Button } from '@/components/button';
 import { HeartButton } from '@/components/heart-button';
 import { PaperBackground } from '@/components/paper-background';
 import { ReportBlockMenu } from '@/components/report-block-menu';
-import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
 import { useBlockedIds } from '@/data/blocks';
 import { aspectRatios, usePainting } from '@/data/paintings';
@@ -136,11 +135,9 @@ export function PaintingScreen() {
             {painting.data.description ? <Text>{painting.data.description}</Text> : null}
 
             {painting.data.tags.length > 0 && (
-              <View style={styles.tags}>
-                {painting.data.tags.map((tag) => (
-                  <TagChip key={tag.id} name={tag.name} />
-                ))}
-              </View>
+              <Text variant="subhead">
+                {painting.data.tags.map((tag) => tag.name.toLowerCase()).join(', ')}
+              </Text>
             )}
 
             <CommentList paintingId={id} paintingTitle={painting.data.title} />
@@ -200,11 +197,6 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.6,
-  },
-  tags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
   },
   state: {
     flex: 1,

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PaperBackground } from '@/components/paper-background';
 import { RequireAccount } from '@/components/require-account';
 import { Text } from '@/components/text';
-import { colors, radius, spacing } from '@/theme';
+import { spacing } from '@/theme';
 
 type SignedOutScreenProps = {
   title: string;
@@ -26,9 +26,7 @@ export function SignedOutScreen({ title, note }: SignedOutScreenProps) {
               {note}
             </Text>
           </View>
-          <View style={styles.card}>
-            <RequireAccount />
-          </View>
+          <RequireAccount />
         </ScrollView>
       </SafeAreaView>
     </PaperBackground>
@@ -50,12 +48,5 @@ const styles = StyleSheet.create({
   },
   center: {
     textAlign: 'center',
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius,
-    padding: spacing.lg,
   },
 });

@@ -90,6 +90,7 @@ export function MyProfile() {
         <PaintingGrid
           paintings={paintings.data ?? []}
           columns={2}
+          showArtist={false}
           header={header}
           empty={empty}
           refreshing={refreshing}
