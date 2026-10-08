@@ -8,7 +8,7 @@ export function ProfileScreen() {
   if (loading) return <PaperBackground />;
   if (!signedIn) {
     return (
-      <SignedOutScreen title="profile" note="your paintings, your name and your bio, all in one place." />
+      <SignedOutScreen title="profile" note="your paintings, all in one place." />
     );
   }
   return <MyProfile />;

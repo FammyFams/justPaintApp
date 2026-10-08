@@ -10,7 +10,7 @@ export function PostScreen() {
     return (
       <SignedOutScreen
         title="post"
-        note="what did you paint today? sign in to share it on the wall."
+        note="sign in to post a painting."
       />
     );
   }

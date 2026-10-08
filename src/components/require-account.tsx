@@ -18,14 +18,17 @@ export function RequireAccount({ inSheet }: RequireAccountProps) {
 
   return (
     <View style={styles.panel}>
-      <View style={styles.words}>
-        <Text variant="headline" style={styles.center}>
-          sign in to post, heart and comment
-        </Text>
-        <Text variant="subhead" style={styles.center}>
-          it&apos;s free. looking around never needs an account.
-        </Text>
-      </View>
+      {/* The sheet needs the reason; the tabs say it in their own line. */}
+      {inSheet && (
+        <View style={styles.words}>
+          <Text variant="headline" style={styles.center}>
+            sign in to post, heart and comment
+          </Text>
+          <Text variant="subhead" style={styles.center}>
+            it&apos;s free. looking around never needs an account.
+          </Text>
+        </View>
+      )}
       <Button variant="circled" title="sign in" onPress={() => open('/sign-in')} style={styles.signIn} />
       <Button title="create an account" onPress={() => open('/sign-up')} style={styles.create} />
     </View>

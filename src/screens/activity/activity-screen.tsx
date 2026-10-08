@@ -10,7 +10,7 @@ export function ActivityScreen() {
     return (
       <SignedOutScreen
         title="activity"
-        note="when someone hearts or comments on your paintings, it shows up here."
+        note="hearts and comments on your paintings."
       />
     );
   }
