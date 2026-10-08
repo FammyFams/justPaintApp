@@ -10,7 +10,7 @@ import { colors, spacing } from '@/theme';
 
 type Item =
   | { type: 'painting'; painting: Painting }
-  | { type: 'section'; section: string | number | null };
+  | { type: 'section'; section: string | number | null; floatOnly?: boolean };
 
 type PaintingGridProps = {
   paintings: Painting[];
@@ -23,6 +23,10 @@ type PaintingGridProps = {
   // share a section (e.g. a challenge day). Expects them already in that order.
   sectionOf?: (painting: Painting) => string | number | null;
   renderSection?: (section: string | number | null) => ReactElement;
+  // The section the header already names (today's prompt on the challenge tab).
+  // If the list starts with it, its heading takes no room up top and only
+  // floats in once you scroll past the header.
+  headerSection?: string | number;
   header?: ReactElement;
   // Shown when there are no paintings: loading, error or empty.
   empty?: ReactElement;
@@ -38,6 +42,7 @@ export function PaintingGrid({
   showArtist = true,
   sectionOf,
   renderSection,
+  headerSection,
   header,
   empty,
   footer,
@@ -60,7 +65,9 @@ export function PaintingGrid({
   visible.forEach((painting, i) => {
     if (sectionOf && renderSection && oneColumn) {
       const section = sectionOf(painting);
-      if (i === 0 || section !== sectionOf(visible[i - 1])) items.push({ type: 'section', section });
+      if (i === 0 || section !== sectionOf(visible[i - 1])) {
+        items.push({ type: 'section', section, floatOnly: i === 0 && section === headerSection });
+      }
     }
     items.push({ type: 'painting', painting });
   });
@@ -77,9 +84,13 @@ export function PaintingGrid({
         item.type === 'painting' ? item.painting.id : `section-${item.section}`
       }
       getItemType={(item) => item.type}
-      renderItem={({ item }) =>
+      renderItem={({ item, target }) =>
         item.type === 'section' ? (
-          <View style={styles.section}>{renderSection?.(item.section)}</View>
+          item.floatOnly && target !== 'StickyHeader' ? (
+            <View style={styles.sectionGap} />
+          ) : (
+            <View style={styles.section}>{renderSection?.(item.section)}</View>
+          )
         ) : (
           <View style={oneColumn ? styles.row : styles.cell}>
             <PaintingCard painting={item.painting} bleed={oneColumn} showArtist={showArtist} />
@@ -136,5 +147,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingTop: spacing.md,
     paddingBottom: spacing.sm,
+  },
+  // Where a float-only heading would sit: just the space above the first painting.
+  sectionGap: {
+    height: spacing.md,
   },
 });

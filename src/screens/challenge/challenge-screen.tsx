@@ -7,7 +7,7 @@ import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
 import { ZoomableImage } from '@/components/zoomable-image';
-import { useChallenge, type Challenge } from '@/data/challenge';
+import { challengeToday, useChallenge, type Challenge } from '@/data/challenge';
 import { paintingsOf, useChallengeEntries } from '@/data/paintings';
 import { env } from '@/lib/env';
 import { DayHeading } from '@/screens/challenge/day-heading';
@@ -41,6 +41,7 @@ export function ChallengeScreen() {
   const [showCalendar, setShowCalendar] = useState(false);
   const paintings = paintingsOf(entries.data);
   const prompts = challenge.data?.prompts;
+  const today = challenge.data && challengeToday(challenge.data);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -163,6 +164,8 @@ export function ChallengeScreen() {
               <DayHeading date="other entries" />
             )
           }
+          // Today's prompt is already in the header, so its day heading waits for a scroll.
+          headerSection={today?.phase === 'during' ? today.prompt.day : undefined}
           header={header}
           empty={empty}
           footer={footer}
