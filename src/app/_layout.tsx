@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useSession } from '@/data/account';
+import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
 import { queryClient } from '@/lib/query-client';
 import { colors, fonts } from '@/theme';
 
@@ -43,10 +44,7 @@ export default function RootLayout() {
   });
   const ready = fontsLoaded || !!fontError;
 
-  useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
-  }, [ready]);
-
+  // The splash stays up until RootStack knows which screen comes first.
   if (!ready) return null;
 
   return (
@@ -61,7 +59,26 @@ export default function RootLayout() {
 
 // Inside the query provider, since it reads the session.
 function RootStack() {
-  const { signedIn } = useSession();
+  const { signedIn, loading } = useSession();
+  const welcomed = useWelcomed();
+  const markWelcomed = useMarkWelcomed();
+  // The saved session and the welcome flag are read first, so a signed-in
+  // person never sees the welcome screen flash by.
+  const ready = !loading && !welcomed.isPending;
+  // First launch, signed out: the welcome screen comes before everything.
+  const showWelcome = ready && welcomed.data === false && !signedIn;
+
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  // Signed in once, here or on the website's account: no welcome after a log out.
+  useEffect(() => {
+    if (signedIn && welcomed.data === false) markWelcomed();
+  }, [signedIn, welcomed.data, markWelcomed]);
+
+  if (!ready) return null;
+
   return (
     <Stack
       screenOptions={{
@@ -69,8 +86,14 @@ function RootStack() {
         contentStyle: { backgroundColor: colors.background },
       }}
     >
-      {/* First, so it's what opens when the launch link names no page. */}
-      <Stack.Screen name="(tabs)" />
+      {/* First, so it's what opens when the launch link names no page. While the
+          welcome screen shows, the tabs are closed and it opens instead. */}
+      <Stack.Protected guard={!showWelcome}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+      <Stack.Protected guard={showWelcome}>
+        <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
+      </Stack.Protected>
       <Stack.Screen name="painting/[id]" options={pageHeader} />
       <Stack.Screen name="artist/[name]" options={pageHeader} />
       <Stack.Screen name="report" options={pageHeader} />
