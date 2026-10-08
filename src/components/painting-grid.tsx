@@ -42,6 +42,7 @@ export function PaintingGrid({
   refreshing = false,
   onRefresh,
 }: PaintingGridProps) {
+  const oneColumn = columns === 1;
   const listRef = useRef<FlashListRef<Item>>(null);
   // Tapping the open tab again scrolls back to the top (does nothing off the tabs).
   useScrollToTop(listRef as RefObject<FlashListRef<Item>>);
@@ -54,7 +55,7 @@ export function PaintingGrid({
 
   const items: Item[] = [];
   visible.forEach((painting, i) => {
-    if (sectionOf && renderSection && columns === 1) {
+    if (sectionOf && renderSection && oneColumn) {
       const section = sectionOf(painting);
       if (i === 0 || section !== sectionOf(visible[i - 1])) items.push({ type: 'section', section });
     }
@@ -77,16 +78,17 @@ export function PaintingGrid({
         item.type === 'section' ? (
           <View style={styles.section}>{renderSection?.(item.section)}</View>
         ) : (
-          <View style={columns === 1 ? styles.row : styles.cell}>
-            <PaintingCard painting={item.painting} />
+          <View style={oneColumn ? styles.row : styles.cell}>
+            <PaintingCard painting={item.painting} bleed={oneColumn} />
           </View>
         )
       }
       masonry={columns > 1}
       numColumns={columns}
-      ListHeaderComponent={header}
-      ListEmptyComponent={empty}
-      ListFooterComponent={footer}
+      // One column runs paintings edge to edge; everything else keeps the page margin.
+      ListHeaderComponent={header && <View style={oneColumn && styles.inset}>{header}</View>}
+      ListEmptyComponent={empty && <View style={oneColumn && styles.inset}>{empty}</View>}
+      ListFooterComponent={footer && <View style={oneColumn && styles.inset}>{footer}</View>}
       onEndReached={onEndReached}
       onEndReachedThreshold={1}
       refreshControl={
@@ -99,30 +101,36 @@ export function PaintingGrid({
           />
         )
       }
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, !oneColumn && styles.margin]}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  // Cells pad 4pt each side, so 16pt at the screen edges.
   content: {
-    paddingHorizontal: spacing.md - spacing.xs,
     paddingBottom: spacing.lg,
   },
-  // Two columns: 8pt between cards.
+  // Two columns: cells pad 4pt each side, so 16pt at the screen edges.
+  margin: {
+    paddingHorizontal: spacing.md - spacing.xs,
+  },
+  // One column: what the screens' headers and states expect (they add 4pt).
+  inset: {
+    paddingHorizontal: spacing.md - spacing.xs,
+  },
+  // Two columns: 8pt between cards, 16pt from a caption to the next picture.
   cell: {
-    padding: spacing.xs,
-  },
-  // One column: 16pt between posts.
-  row: {
     paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.sm,
+    paddingBottom: spacing.md,
   },
-  // Solid, so paintings don't show through while the heading floats.
+  // One column: edge to edge, 32pt between posts.
+  row: {
+    paddingBottom: spacing.xl,
+  },
+  // One column only. Solid, so paintings don't show through while it floats.
   section: {
     backgroundColor: colors.background,
-    paddingHorizontal: spacing.xs,
+    paddingHorizontal: spacing.md,
     paddingTop: spacing.md,
     paddingBottom: spacing.sm,
   },

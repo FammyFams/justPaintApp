@@ -9,13 +9,15 @@ import {
 
 import { HandCircle } from '@/components/hand-circle';
 import { Text } from '@/components/text';
-import { colors, radius, spacing, touchTarget } from '@/theme';
+import { colors, fonts, spacing, touchTarget } from '@/theme';
 
 type ButtonProps = {
   title: string;
-  // plain: outlined, for ordinary actions. circled: the main call to action,
-  // circled by hand in crimson. Use one circled button per screen at most.
+  // plain: crimson words, for ordinary actions. circled: the main call to
+  // action, circled by hand in crimson. Use one circled button per screen at most.
   variant?: 'plain' | 'circled';
+  // Plain buttons only: navy words instead of crimson (log out).
+  tone?: 'primary' | 'default';
   onPress?: () => void;
   disabled?: boolean;
   loading?: boolean;
@@ -25,12 +27,14 @@ type ButtonProps = {
 export function Button({
   title,
   variant = 'plain',
+  tone = 'primary',
   onPress,
   disabled,
   loading,
   style,
 }: ButtonProps) {
   const inactive = disabled || loading;
+  const plain = variant === 'plain';
   return (
     <Pressable
       accessibilityRole="button"
@@ -38,23 +42,35 @@ export function Button({
       accessibilityState={{ disabled: !!inactive, busy: !!loading }}
       disabled={inactive}
       onPress={onPress}
+      // Plain words have no padding, so the touch area reaches past them.
+      hitSlop={plain ? spacing.sm : undefined}
       style={({ pressed }) => [
         styles.base,
-        variant === 'plain' && styles.plain,
-        variant === 'plain' && pressed && styles.plainPressed,
-        variant === 'circled' && styles.circled,
+        plain ? styles.plain : styles.circled,
+        plain && pressed && styles.plainPressed,
         disabled && styles.disabled,
         style,
       ]}
     >
       {({ pressed }) => (
         <>
-          {variant === 'circled' && <HandCircle tilted={pressed} />}
+          {!plain && <HandCircle tilted={pressed} />}
           {/* Keeps the button's width while the spinner shows. */}
           <View style={loading && styles.hidden}>
-            <Text variant="headline">{title}</Text>
+            {plain ? (
+              <Text variant="subhead" tone={tone} style={styles.plainText}>
+                {title}
+              </Text>
+            ) : (
+              <Text variant="headline">{title}</Text>
+            )}
           </View>
-          {loading && <ActivityIndicator color={colors.foreground} style={styles.spinner} />}
+          {loading && (
+            <ActivityIndicator
+              color={plain && tone === 'primary' ? colors.primary : colors.foreground}
+              style={styles.spinner}
+            />
+          )}
         </>
       )}
     </Pressable>
@@ -66,20 +82,20 @@ const styles = StyleSheet.create({
     minHeight: touchTarget,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
   },
   plain: {
-    backgroundColor: colors.background,
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: radius,
+    paddingVertical: spacing.sm,
   },
   plainPressed: {
-    backgroundColor: colors.muted,
+    opacity: 0.6,
+  },
+  plainText: {
+    fontFamily: fonts.semibold,
   },
   circled: {
     alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
   disabled: {
     opacity: 0.5,

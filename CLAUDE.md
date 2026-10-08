@@ -36,6 +36,7 @@ iPhone and Android app for https://justpaint.art (a chronological wall of beginn
 
 - Colors: page `#fbf5f3`, text `#000022`, card `#fffdfc`, crimson `#c42847` (accent, text on it `#fbf5f3`), muted `#f2e6e2`, muted text `#5a586c`, orange `#e28413` (only with navy text), error red `#de3c4b`, border `#eaddd8`, input edge `#948985`. Radius 4.
 - Font: Plus Jakarta Sans. Light mode only.
-- Crimson is an accent, not a fill. No pill buttons, no soft blurred shadows, no staggered fade-ins. The main call to action is a hand-drawn crimson circle.
+- Crimson is an accent, not a fill. No pill buttons, no soft blurred shadows, no staggered fade-ins. The main call to action is a hand-drawn crimson circle; every other button is plain crimson words (`Button` plain), never a box. Log out uses `tone="default"` (navy).
+- Paintings have no card frame and no tag chips on cards: one-column lists run them edge to edge with the title and "name · tags" as text underneath; two-column walls keep the page margin. Small capitals above headings (challenge labels) stay.
 - Lowercase voice ("what did you paint today?"). No em dashes in app text. Log out is navy, not red.
 - Accessibility: WCAG 2.2 AA contrast, font scaling on, 44pt touch targets, labels on icon buttons.

@@ -6,7 +6,7 @@ import { HeartIcon } from '@/components/heart-icon';
 import { Text } from '@/components/text';
 import { useHeart } from '@/data/hearts';
 import type { Painting } from '@/data/paintings';
-import { colors, radius, spacing, touchTarget } from '@/theme';
+import { colors, spacing, touchTarget } from '@/theme';
 
 // Reanimated CSS transition (StyleSheet.create doesn't take these): 150ms, ease-out.
 const grow = {
@@ -18,7 +18,7 @@ const grow = {
 
 type HeartButtonProps = {
   painting: Painting;
-  // Small and borderless, for cards. Otherwise an outlined button with "12 hearts".
+  // Small, for cards. Otherwise bigger, with "12 hearts".
   compact?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -28,7 +28,7 @@ export function HeartButton({ painting, compact, style }: HeartButtonProps) {
   const reducedMotion = useReducedMotion();
   const [pressed, setPressed] = useState(false);
   const hearts = `${heart.count} ${heart.count === 1 ? 'heart' : 'hearts'}`;
-  const size = compact ? 18 : 20;
+  const size = compact ? 18 : 22;
 
   return (
     <Pressable
@@ -41,8 +41,8 @@ export function HeartButton({ painting, compact, style }: HeartButtonProps) {
       accessibilityLabel={`heart, ${hearts}`}
       accessibilityState={{ checked: heart.hearted, busy: heart.saving }}
       style={[
-        compact ? styles.compact : styles.outlined,
-        pressed && (compact ? styles.compactPressed : styles.outlinedPressed),
+        compact ? styles.compact : styles.full,
+        pressed && styles.pressed,
         style,
       ]}
     >
@@ -62,20 +62,12 @@ export function HeartButton({ painting, compact, style }: HeartButtonProps) {
 }
 
 const styles = StyleSheet.create({
-  outlined: {
+  full: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
     minHeight: touchTarget,
-    paddingHorizontal: spacing.md,
-    backgroundColor: colors.background,
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: radius,
-  },
-  outlinedPressed: {
-    backgroundColor: colors.muted,
   },
   compact: {
     flexDirection: 'row',
@@ -86,7 +78,7 @@ const styles = StyleSheet.create({
     minHeight: touchTarget,
     paddingHorizontal: spacing.xs,
   },
-  compactPressed: {
+  pressed: {
     opacity: 0.6,
   },
   grown: {

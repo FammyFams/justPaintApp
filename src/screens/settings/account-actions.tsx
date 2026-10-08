@@ -25,6 +25,7 @@ export function AccountActions() {
     <View style={styles.actions}>
       <Button
         title="log out"
+        tone="default"
         loading={signOut.isPending}
         disabled={remove.isPending}
         onPress={() => signOut.mutate()}

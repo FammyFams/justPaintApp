@@ -7,7 +7,6 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import { HeartBurst } from '@/components/heart-burst';
 import { HeartButton } from '@/components/heart-button';
-import { TagChip } from '@/components/tag-chip';
 import { Text } from '@/components/text';
 import { useHeart } from '@/data/hearts';
 import { aspectRatios, type Painting } from '@/data/paintings';
@@ -16,9 +15,21 @@ import { colors, radius, spacing, touchTarget } from '@/theme';
 // How long a first tap on the picture waits for a second one.
 const DOUBLE_TAP_MS = 250;
 
-export function PaintingCard({ painting }: { painting: Painting }) {
+type PaintingCardProps = {
+  painting: Painting;
+  // Edge to edge, for one-column lists. Otherwise the picture keeps rounded
+  // corners and the words line up with it (two-column walls).
+  bleed?: boolean;
+};
+
+export function PaintingCard({ painting, bleed }: PaintingCardProps) {
   const guest = !painting.artistId;
   const tags = painting.tags.slice(0, 3);
+  // "Dasha · watercolor, gouache": one plain line under the title.
+  const details = [
+    `${painting.authorName}${guest ? ' (guest)' : ''}`,
+    tags.map((tag) => tag.name.toLowerCase()).join(', '),
+  ].filter(Boolean);
   const heart = useHeart(painting);
   const [pressed, setPressed] = useState(false);
   // Each double tap plays the big heart again. Starts over when the list
@@ -41,7 +52,7 @@ export function PaintingCard({ painting }: { painting: Painting }) {
   );
 
   return (
-    <View style={[styles.card, pressed && styles.pressed]}>
+    <View>
       {/* One link for screen readers, which open it with their own double tap. */}
       <View
         accessible
@@ -53,7 +64,6 @@ export function PaintingCard({ painting }: { painting: Painting }) {
         ].join(', ')}
         accessibilityActions={[{ name: 'activate' }]}
         onAccessibilityAction={(event) => event.nativeEvent.actionName === 'activate' && open()}
-        style={styles.link}
       >
         <GestureDetector gesture={pictureTaps}>
           <View collapsable={false}>
@@ -65,7 +75,11 @@ export function PaintingCard({ painting }: { painting: Painting }) {
               contentFit="cover"
               transition={150}
               // Fixed ratios, so cards keep their size while images load.
-              style={[styles.image, { aspectRatio: aspectRatios[painting.aspect] }]}
+              style={[
+                styles.image,
+                !bleed && styles.imageRounded,
+                { aspectRatio: aspectRatios[painting.aspect] },
+              ]}
             />
             {bursts > 0 && <HeartBurst key={bursts} />}
           </View>
@@ -75,69 +89,51 @@ export function PaintingCard({ painting }: { painting: Painting }) {
           onPress={open}
           onPressIn={() => setPressed(true)}
           onPressOut={() => setPressed(false)}
-          style={styles.caption}
+          style={[styles.caption, bleed && styles.captionInset, pressed && styles.pressed]}
         >
           <Text variant="headline" numberOfLines={1}>
             {painting.title}
           </Text>
-          <Text variant="caption" numberOfLines={1} style={styles.author}>
-            {painting.authorName.toUpperCase()}
-            {guest && ' · guest'}
+          <Text variant="subhead" numberOfLines={1}>
+            {details.join(' · ')}
           </Text>
-          {tags.length > 0 && (
-            <View style={styles.tags}>
-              {tags.map((tag) => (
-                <TagChip key={tag.id} name={tag.name} />
-              ))}
-            </View>
-          )}
         </Pressable>
       </View>
       {/* Beside the link, not inside it, so screen readers reach it on its own. */}
-      <HeartButton painting={painting} compact style={styles.heart} />
+      <HeartButton painting={painting} compact style={[styles.heart, bleed && styles.heartInset]} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.card,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius,
-    overflow: 'hidden',
-  },
-  link: {
-    padding: spacing.sm,
-  },
-  pressed: {
-    backgroundColor: colors.muted,
-  },
   image: {
     width: '100%',
     backgroundColor: colors.muted,
-    // Nested inside the card's padding, so a little tighter than the card.
-    borderRadius: radius / 2,
+  },
+  imageRounded: {
+    borderRadius: radius,
   },
   caption: {
     paddingTop: spacing.sm,
-    paddingLeft: spacing.xs,
+    paddingBottom: spacing.xs,
     // Room for the heart in the bottom corner.
     paddingRight: touchTarget,
     gap: 2,
   },
-  author: {
-    letterSpacing: 0.5,
+  captionInset: {
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md + touchTarget,
   },
-  tags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    paddingTop: spacing.xs,
+  pressed: {
+    backgroundColor: colors.muted,
   },
+  // The heart pads its count by 4pt, so this lines the count up with the picture.
   heart: {
     position: 'absolute',
-    right: spacing.xs,
-    bottom: spacing.xs,
+    right: -spacing.xs,
+    bottom: 0,
+  },
+  heartInset: {
+    right: spacing.md - spacing.xs,
   },
 });
