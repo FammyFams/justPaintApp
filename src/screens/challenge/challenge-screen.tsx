@@ -63,6 +63,9 @@ export function ChallengeScreen() {
         {challenge.data?.name ?? 'october painting challenge'}
       </Text>
       <Text tone="muted">one prompt a day, all month long. paint along with everyone.</Text>
+      {(entries.isRefetchError || challenge.isRefetchError) && (
+        <Text variant="caption">couldn&apos;t refresh. showing the entries you already have.</Text>
+      )}
       <View style={styles.today}>
         {challenge.data ? (
           <>

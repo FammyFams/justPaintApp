@@ -87,6 +87,9 @@ export function ArtistScreen() {
         {count !== undefined && ` · ${count} ${count === 1 ? 'painting' : 'paintings'}`}
       </Text>
       {artist.data.bio ? <Text style={styles.bio}>{artist.data.bio}</Text> : null}
+      {(artist.isRefetchError || paintings.isRefetchError) && (
+        <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
+      )}
     </View>
   );
 

@@ -64,6 +64,9 @@ export function MyProfile() {
       </Text>
       <Text variant="subhead">{facts.join(' · ')}</Text>
       {me.data.bio ? <Text style={styles.bio}>{me.data.bio}</Text> : null}
+      {(me.isRefetchError || paintings.isRefetchError) && (
+        <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
+      )}
       <Button title="settings" onPress={() => router.push('/settings')} style={styles.settings} />
     </View>
   );
