@@ -55,7 +55,7 @@ export function useAddComment(paintingId: string) {
   const me = useMe();
   return useMutation({
     mutationFn: async (body: string) => {
-      if (!body.trim()) throw new Error("write something first.");
+      if (!body.trim()) throw new Error("Write something first.");
       return (await api<AddedComment>('comments', { method: 'POST', body: { paintingId, body } }))
         .comment;
     },

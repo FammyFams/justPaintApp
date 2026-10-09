@@ -21,13 +21,13 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
     <View style={styles.card}>
       {today.phase === 'before' ? (
         <>
-          <Text variant="headline">the challenge starts {startLabel}.</Text>
-          <Text variant="subhead">come back then for the first prompt.</Text>
+          <Text variant="headline">The challenge starts {startLabel}.</Text>
+          <Text variant="subhead">Come back then for the first prompt.</Text>
         </>
       ) : today.phase === 'after' ? (
         <>
-          <Text variant="headline">the challenge has ended.</Text>
-          <Text variant="subhead">thanks for painting along. every entry is below.</Text>
+          <Text variant="headline">The challenge has ended.</Text>
+          <Text variant="subhead">Thanks for painting along. Every entry is below.</Text>
         </>
       ) : (
         <>

@@ -23,7 +23,7 @@ export function CommentBox({ paintingId }: { paintingId: string }) {
   const add = useAddComment(paintingId);
 
   if (!signedIn) {
-    return <TextLink title="sign in to comment" onPress={() => router.push('/require-account')} />;
+    return <TextLink title="Sign in to comment" onPress={() => router.push('/require-account')} />;
   }
 
   const left = COMMENT_MAX_LENGTH - text.length;
@@ -41,13 +41,13 @@ export function CommentBox({ paintingId }: { paintingId: string }) {
   return (
     <View style={styles.box}>
       <TextField
-        label="add a comment"
+        label="Add a comment"
         value={text}
         onChangeText={(value) => {
           setText(value);
           if (add.isError) add.reset();
         }}
-        placeholder="say something about this piece"
+        placeholder="Say something about this piece"
         multiline
         maxLength={COMMENT_MAX_LENGTH}
       />
@@ -56,7 +56,7 @@ export function CommentBox({ paintingId }: { paintingId: string }) {
         <Text variant="caption" accessibilityLiveRegion="polite">
           {left <= NEAR_LIMIT ? `${left} ${left === 1 ? 'character' : 'characters'} left` : ''}
         </Text>
-        <Button title="post" onPress={send} loading={add.isPending} disabled={!text.trim()} />
+        <Button title="Post" onPress={send} loading={add.isPending} disabled={!text.trim()} />
       </View>
     </View>
   );

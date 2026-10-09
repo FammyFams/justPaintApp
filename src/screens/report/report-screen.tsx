@@ -44,15 +44,15 @@ export function ReportScreen() {
       <PaperBackground>
         <View style={styles.content} accessibilityRole="summary">
           <Text variant="display" accessibilityRole="header">
-            thank you
+            Thank you
           </Text>
-          <Text variant="headline">report received. your reference number is #{send.data}.</Text>
+          <Text variant="headline">Report received. Your reference number is #{send.data}.</Text>
           <Text variant="subhead">
             we&apos;ll review it and, if it breaks the rules, remove the post and any identical
-            copies within 48 hours. we may email you if we need more information. keep your
+            copies within 48 hours. We may email you if we need more information. Keep your
             reference number if you want to follow up.
           </Text>
-          <Button title="done" onPress={() => router.back()} style={styles.left} />
+          <Button title="Done" onPress={() => router.back()} style={styles.left} />
         </View>
       </PaperBackground>
     );
@@ -70,23 +70,23 @@ export function ReportScreen() {
       >
         <View style={styles.heading}>
           <Text variant="display" accessibilityRole="header">
-            report a post
+            Report a post
           </Text>
-          {params.title ? <Text variant="subhead">about “{params.title}”.</Text> : null}
+          {params.title ? <Text variant="subhead">About “{params.title}”.</Text> : null}
         </View>
 
         <ReasonPicker value={reason} onChange={edit(setReason)} />
         <TextField
-          label="anything we should know"
+          label="Anything we should know"
           hint="optional"
-          placeholder="for example: who is in the image, or where else it was posted."
+          placeholder="For example: who is in the image, or where else it was posted."
           value={details}
           onChangeText={edit(setDetails)}
           maxLength={REPORT_DETAILS_MAX}
           multiline
         />
         <TextField
-          label="your email"
+          label="Your email"
           hint="so we can reply"
           value={email}
           onChangeText={edit(setEmail)}
@@ -97,7 +97,7 @@ export function ReportScreen() {
           textContentType="emailAddress"
         />
         <TextField
-          label="signature"
+          label="Signature"
           hint="type your full name"
           value={signature}
           onChangeText={edit(setSignature)}
@@ -106,13 +106,13 @@ export function ReportScreen() {
           maxLength={100}
         />
         <Checkbox
-          label="i believe in good faith that this post breaks the rules (for an intimate image: that it was shared without the consent of the person shown), and the information in this report is accurate."
+          label="I believe in good faith that this post breaks the rules (for an intimate image: that it was shared without the consent of the person shown), and the information in this report is accurate."
           checked={goodFaith}
           onChange={edit(setGoodFaith)}
         />
 
         <FormError message={send.error && errorMessage(send.error)} />
-        <Button variant="circled" title="send report" loading={send.isPending} onPress={submit} />
+        <Button variant="circled" title="Send report" loading={send.isPending} onPress={submit} />
       </ScrollView>
     </PaperBackground>
   );

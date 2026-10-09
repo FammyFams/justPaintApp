@@ -40,19 +40,19 @@ export function SignUpScreen() {
   if (sentTo) {
     return (
       <CheckEmail
-        message={`we sent a confirmation link to ${sentTo}. open it to finish creating your account, then sign in here.`}
-        action={<Button title="sign in" onPress={() => router.replace('/sign-in')} />}
+        message={`We sent a confirmation link to ${sentTo}. open it to finish creating your account, then sign in here.`}
+        action={<Button title="Sign in" onPress={() => router.replace('/sign-in')} />}
       />
     );
   }
 
   return (
-    <AuthForm title="join justpaint." intro="free. post your paintings, heart and comment.">
+    <AuthForm title="Join justpaint." intro="Free. Post your paintings, heart and comment.">
       <TextField
-        label="display name"
+        label="Display name"
         value={displayName}
         onChangeText={setDisplayName}
-        placeholder="your name"
+        placeholder="Your name"
         autoComplete="nickname"
         textContentType="nickname"
         autoCapitalize="none"
@@ -64,7 +64,7 @@ export function SignUpScreen() {
       />
       <TextField
         ref={emailField}
-        label="email"
+        label="Email"
         value={email}
         onChangeText={setEmail}
         placeholder="you@example.com"
@@ -80,7 +80,7 @@ export function SignUpScreen() {
       />
       <TextField
         ref={passwordField}
-        label="password"
+        label="Password"
         hint="at least 8 characters"
         value={password}
         onChangeText={setPassword}
@@ -96,18 +96,18 @@ export function SignUpScreen() {
 
       <View>
         <Checkbox
-          label="i'm 13 or older and agree to the terms of use and privacy policy."
+          label="I'm 13 or older and agree to the terms of use and privacy policy."
           checked={agreedToTerms}
           onChange={setAgreedToTerms}
         />
         <View style={styles.links}>
           <TextLink
-            title="terms of use"
+            title="Terms of use"
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/terms`)}
           />
           <TextLink
-            title="privacy policy"
+            title="Privacy policy"
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/privacy`)}
           />
@@ -118,15 +118,15 @@ export function SignUpScreen() {
 
       <Button
         variant="circled"
-        title="create account"
+        title="Create account"
         loading={signUp.isPending}
         onPress={submit}
         style={styles.submit}
       />
 
       <View style={styles.switch}>
-        <Text variant="subhead">already painting here?</Text>
-        <TextLink title="sign in" onPress={() => router.replace('/sign-in')} />
+        <Text variant="subhead">Already painting here?</Text>
+        <TextLink title="Sign in" onPress={() => router.replace('/sign-in')} />
       </View>
     </AuthForm>
   );

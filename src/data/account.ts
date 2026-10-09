@@ -82,9 +82,9 @@ export function useMe() {
   });
 }
 
-const UNREACHABLE = "couldn't reach the server. check your connection and try again.";
-const BUSY = 'the server is busy right now. try again in a few minutes.';
-const TOO_MANY_TRIES = 'too many tries. wait a bit and try again.';
+const UNREACHABLE = "Couldn't reach the server. Check your connection and try again.";
+const BUSY = 'The server is busy right now. Try again in a few minutes.';
+const TOO_MANY_TRIES = 'Too many tries. Wait a bit and try again.';
 
 // Supabase's messages are written for developers; show people these (the same
 // wording as the website's lib/writes/account.ts, in the app's lowercase voice).
@@ -92,25 +92,30 @@ function authMessage(error: AuthError): string {
   if (isAuthRetryableFetchError(error)) return UNREACHABLE;
   switch (error.code) {
     case 'invalid_credentials':
-      return 'wrong email or password.';
+      return 'Wrong email or password.';
     case 'email_not_confirmed':
-      return 'confirm your email first. check your inbox for the link.';
+      return 'Confirm your email first. Check your inbox for the link.';
     case 'email_address_invalid':
     case 'validation_failed':
-      return 'enter a valid email.';
+      return 'Enter a valid email.';
     case 'over_request_rate_limit':
       return TOO_MANY_TRIES;
     case 'over_email_send_rate_limit':
-      return "the server can't send another email yet. wait a few minutes and try again.";
+      return "The server can't send another email yet. Wait a few minutes and try again.";
   }
   if (isAuthApiError(error) && error.status === 429) return TOO_MANY_TRIES;
   return BUSY;
 }
 
-// The website's messages are sentence case; the app is lowercase.
+// Sentence case, like the rest of the app. The website's app API writes some
+// of its own messages in lowercase ("sign in to do that."), so each sentence
+// gets its capital here.
+const sentenceCase = (message: string) =>
+  message.replace(/(^|[.?!]\s+)([a-z])/g, (_, start: string, letter: string) => start + letter.toUpperCase());
+
 export function errorMessage(error: unknown): string {
-  if (error instanceof ApiError) return error.message.toLowerCase();
-  if (error instanceof Error) return error.message.toLowerCase();
+  if (error instanceof ApiError) return sentenceCase(error.message);
+  if (error instanceof Error) return sentenceCase(error.message);
   return BUSY;
 }
 
@@ -119,15 +124,15 @@ const EMAIL = /^\S+@\S+\.\S+$/;
 // Quick checks so an empty or obviously wrong form doesn't need a round trip.
 // The server checks everything again.
 function checkEmail(email: string) {
-  if (!email) throw new Error('enter your email.');
-  if (!EMAIL.test(email)) throw new Error('enter a valid email.');
+  if (!email) throw new Error('Enter your email.');
+  if (!EMAIL.test(email)) throw new Error('Enter a valid email.');
 }
 
 export function useSignIn() {
   return useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
       checkEmail(email);
-      if (!password) throw new Error('enter your password.');
+      if (!password) throw new Error('Enter your password.');
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw new Error(authMessage(error));
     },
@@ -152,11 +157,11 @@ type SignUpAnswer = {
 export function useSignUp() {
   return useMutation({
     mutationFn: async (values: SignUpValues): Promise<boolean> => {
-      if (values.displayName.trim().length < 2) throw new Error('pick a display name.');
+      if (values.displayName.trim().length < 2) throw new Error('Pick a display name.');
       checkEmail(values.email);
-      if (values.password.length < 8) throw new Error('use at least 8 characters for your password.');
+      if (values.password.length < 8) throw new Error('Use at least 8 characters for your password.');
       if (!values.agreedToTerms) {
-        throw new Error("confirm you're 13 or older and agree to the terms of use.");
+        throw new Error("Confirm you're 13 or older and agree to the terms of use.");
       }
       const answer = await api<SignUpAnswer>('auth/signup', { method: 'POST', body: values });
       if (answer.session) {
@@ -198,8 +203,8 @@ export function useUpdateProfile() {
     mutationFn: async (values: ProfileValues) => {
       const displayName = values.displayName.trim();
       const bio = values.bio.trim();
-      if (displayName.length < 2) throw new Error('use at least 2 characters for your name.');
-      if (bio.length > BIO_MAX) throw new Error(`keep your bio under ${BIO_MAX} characters.`);
+      if (displayName.length < 2) throw new Error('Use at least 2 characters for your name.');
+      if (bio.length > BIO_MAX) throw new Error(`Keep your bio under ${BIO_MAX} characters.`);
       const answer = await api<{ profile: ProfileValues }>('profile', {
         method: 'PATCH',
         body: { displayName, bio },

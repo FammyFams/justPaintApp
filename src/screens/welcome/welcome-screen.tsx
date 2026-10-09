@@ -37,14 +37,14 @@ export function WelcomeScreen() {
         <View style={styles.actions}>
           <Button
             variant="circled"
-            title="create an account"
+            title="Create an account"
             onPress={() => router.push('/sign-up')}
             style={styles.centerSelf}
           />
-          <Button title="continue as guest" onPress={markWelcomed} />
+          <Button title="Continue as guest" onPress={markWelcomed} />
           <View style={styles.signIn}>
-            <Text variant="subhead">already on justpaint.art?</Text>
-            <TextLink title="sign in" onPress={() => router.push('/sign-in')} />
+            <Text variant="subhead">Already on justpaint.art?</Text>
+            <TextLink title="Sign in" onPress={() => router.push('/sign-in')} />
           </View>
         </View>
       </SafeAreaView>

@@ -35,19 +35,19 @@ export function PhotoBox({ photo, busy, onPick }: PhotoBoxProps) {
           />
         ) : (
           <Text variant="subhead" style={styles.center}>
-            a photo of your painting goes here
+            A photo of your painting goes here
           </Text>
         )}
       </View>
       <View style={styles.buttons}>
         <Button
-          title={photo ? 'take another' : 'take a photo'}
+          title={photo ? 'Take another' : 'Take a photo'}
           onPress={() => onPick('camera')}
           disabled={busy}
           style={styles.button}
         />
         <Button
-          title={photo ? 'choose another' : 'choose a photo'}
+          title={photo ? 'Choose another' : 'Choose a photo'}
           onPress={() => onPick('library')}
           disabled={busy}
           style={styles.button}

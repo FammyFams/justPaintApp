@@ -6,7 +6,7 @@ const longDate = new Intl.DateTimeFormat('en-US', {
 
 // "october 6, 2026": lowercase, like the rest of the app's voice.
 export function formatDate(iso: string): string {
-  return longDate.format(new Date(iso)).toLowerCase();
+  return longDate.format(new Date(iso));
 }
 
 // "just now", "5 minutes ago", "3 hours ago", "yesterday", "4 days ago", then

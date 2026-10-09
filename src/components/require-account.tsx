@@ -25,12 +25,12 @@ export function RequireAccount({ inSheet }: RequireAccountProps) {
             sign in to post, heart and comment
           </Text>
           <Text variant="subhead" style={styles.center}>
-            it&apos;s free. looking around never needs an account.
+            it&apos;s free. Looking around never needs an account.
           </Text>
         </View>
       )}
-      <Button variant="circled" title="sign in" onPress={() => open('/sign-in')} style={styles.signIn} />
-      <Button title="create an account" onPress={() => open('/sign-up')} style={styles.create} />
+      <Button variant="circled" title="Sign in" onPress={() => open('/sign-in')} style={styles.signIn} />
+      <Button title="Create an account" onPress={() => open('/sign-up')} style={styles.create} />
     </View>
   );
 }

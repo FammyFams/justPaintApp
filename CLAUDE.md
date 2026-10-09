@@ -38,5 +38,5 @@ iPhone and Android app for https://justpaint.art (a chronological wall of beginn
 - Font: Plus Jakarta Sans. Light mode only.
 - Crimson is an accent, not a fill. No pill buttons, no soft blurred shadows, no staggered fade-ins. The main call to action is a hand-drawn crimson circle; every other button is plain crimson words (`Button` plain), never a box. Log out uses `tone="default"` (navy).
 - Paintings have no card frame: one-column lists run them edge to edge with the title and "name · tags" as text underneath; two-column walls keep the page margin (artist pages leave the name out). Tags are plain lowercase text everywhere, never chips. Panels sit on the page, not in bordered boxes. Small capitals above headings (challenge labels) stay.
-- Lowercase voice ("what did you paint today?"). No em dashes in app text. Log out is navy, not red.
+- Sentence case, like the website ("Display name", "Save changes", "Couldn't load the paintings."; since 2026-10-08). Only the tagline lines stay lowercase ("what did you paint today?", "a painting community for beginners."), and tags. No em dashes in app text. Log out is navy, not red.
 - Accessibility: WCAG 2.2 AA contrast, font scaling on, 44pt touch targets, labels on icon buttons.

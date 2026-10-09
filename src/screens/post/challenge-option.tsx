@@ -28,7 +28,7 @@ export function ChallengeOption({ day, onChange }: ChallengeOptionProps) {
   return (
     <View>
       <Checkbox
-        label={`it's for the challenge (today's prompt: ${today.prompt.prompt.toLowerCase()})`}
+        label={`It's for the challenge (today's prompt: ${today.prompt.prompt})`}
         checked={day !== null}
         onChange={(checked) => onChange(checked ? today.prompt.day : null)}
       />
@@ -45,7 +45,7 @@ export function ChallengeOption({ day, onChange }: ChallengeOptionProps) {
             style={styles.dayText}
             accessibilityLiveRegion="polite"
           >
-            day {chosen.day}: {chosen.prompt.toLowerCase()}
+            Day {chosen.day}: {chosen.prompt}
             {chosen.day === today.prompt.day ? ' (today)' : ''}
           </Text>
           <DayArrow

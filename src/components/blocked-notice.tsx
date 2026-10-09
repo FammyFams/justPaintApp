@@ -13,12 +13,12 @@ export function BlockedNotice({ artist }: { artist: { id: string; name: string }
   return (
     <View style={styles.notice}>
       <Text variant="headline" accessibilityRole="header">
-        you blocked {artist.name}
+        You blocked {artist.name}
       </Text>
-      <Text variant="subhead">their paintings and comments are hidden from you.</Text>
+      <Text variant="subhead">Their paintings and comments are hidden from you.</Text>
       <FormError message={unblock.error && errorMessage(unblock.error)} />
       <Button
-        title="unblock"
+        title="Unblock"
         loading={unblock.isPending}
         onPress={() => unblock.mutate(artist.id)}
         style={styles.button}

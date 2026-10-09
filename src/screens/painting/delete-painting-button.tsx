@@ -14,10 +14,10 @@ export function DeletePaintingButton({ painting }: { painting: Painting }) {
   if (!userId || painting.artistId !== userId) return null;
 
   const confirm = () =>
-    Alert.alert('delete this painting?', "it'll be gone for good, with its hearts and comments.", [
-      { text: 'cancel', style: 'cancel' },
+    Alert.alert('Delete this painting?', "It'll be gone for good, with its hearts and comments.", [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: 'delete',
+        text: 'Delete',
         style: 'destructive',
         onPress: () => remove.mutate(painting.id, { onSuccess: () => router.back() }),
       },
@@ -26,7 +26,7 @@ export function DeletePaintingButton({ painting }: { painting: Painting }) {
   return (
     <View style={styles.wrap}>
       <FormError message={remove.error && errorMessage(remove.error)} />
-      <Button title="delete painting" onPress={confirm} loading={remove.isPending} style={styles.button} />
+      <Button title="Delete painting" onPress={confirm} loading={remove.isPending} style={styles.button} />
     </View>
   );
 }

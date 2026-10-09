@@ -59,11 +59,11 @@ export function ActivityList() {
           ListHeaderComponent={
             <View style={styles.heading}>
               <Text variant="display" accessibilityRole="header">
-                activity
+                Activity
               </Text>
-              <Text variant="subhead">hearts and comments on your paintings from the last 30 days.</Text>
+              <Text variant="subhead">Hearts and comments on your paintings from the last 30 days.</Text>
               {notifications.isRefetchError && (
-                <Text variant="caption">couldn&apos;t refresh. pull down to try again.</Text>
+                <Text variant="caption">Couldn&apos;t refresh. Pull down to try again.</Text>
               )}
             </View>
           }
@@ -76,12 +76,12 @@ export function ActivityList() {
               />
             ) : notifications.isError ? (
               <View style={styles.message}>
-                <Text variant="subhead">couldn&apos;t load your activity.</Text>
-                <Button title="try again" onPress={() => notifications.refetch()} />
+                <Text variant="subhead">Couldn&apos;t load your activity.</Text>
+                <Button title="Try again" onPress={() => notifications.refetch()} />
               </View>
             ) : (
               <Text variant="subhead" style={styles.message}>
-                nothing yet. when someone hearts or comments on your paintings, it shows up here.
+                Nothing yet. When someone hearts or comments on your paintings, it shows up here.
               </Text>
             )
           }

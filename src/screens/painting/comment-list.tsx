@@ -25,7 +25,7 @@ export function CommentList({ paintingId, paintingTitle }: CommentListProps) {
   return (
     <View style={styles.section}>
       <Text variant="headline" accessibilityRole="header">
-        comments{shown && shown.length > 0 ? ` (${shown.length})` : ''}
+        Comments{shown && shown.length > 0 ? ` (${shown.length})` : ''}
       </Text>
 
       {comments.isPending ? (
@@ -36,11 +36,11 @@ export function CommentList({ paintingId, paintingTitle }: CommentListProps) {
         />
       ) : comments.isError && !comments.data ? (
         <View style={styles.error}>
-          <Text variant="subhead">couldn&apos;t load the comments.</Text>
-          <Button title="try again" onPress={() => comments.refetch()} />
+          <Text variant="subhead">Couldn&apos;t load the comments.</Text>
+          <Button title="Try again" onPress={() => comments.refetch()} />
         </View>
       ) : !shown || shown.length === 0 ? (
-        <Text variant="subhead">no comments yet.</Text>
+        <Text variant="subhead">No comments yet.</Text>
       ) : (
         shown.map((comment) => (
           <View key={comment.id} style={styles.row}>
@@ -55,7 +55,7 @@ export function CommentList({ paintingId, paintingTitle }: CommentListProps) {
               <Text>{comment.body}</Text>
             </View>
             <ReportBlockMenu
-              label={`more options for ${comment.authorName}'s comment`}
+              label={`More options for ${comment.authorName}'s comment`}
               report={{
                 paintingId,
                 title: paintingTitle,

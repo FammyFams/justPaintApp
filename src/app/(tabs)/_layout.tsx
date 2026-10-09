@@ -25,7 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'feed',
+          title: 'Feed',
           tabBarIcon: (props) => (
             <TabIcon
               name={{ ios: 'square.grid.2x2', android: 'grid_view' }}
@@ -38,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="challenge"
         options={{
-          title: 'challenge',
+          title: 'Challenge',
           tabBarIcon: (props) => (
             <TabIcon name={{ ios: 'calendar', android: 'calendar_month' }} {...props} />
           ),
@@ -47,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="post"
         options={{
-          title: 'post',
+          title: 'Post',
           // The website's hand-drawn circle, always crimson: it is the main call to action.
           tabBarIcon: () => (
             <Image source={require('@/assets/images/tab-post.png')} style={styles.postIcon} />
@@ -57,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="activity"
         options={{
-          title: 'activity',
+          title: 'Activity',
           tabBarBadge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined,
           tabBarBadgeStyle: styles.badge,
           tabBarAccessibilityLabel: unread > 0 ? `activity, ${unread} new` : 'activity',
@@ -73,7 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'profile',
+          title: 'Profile',
           tabBarIcon: (props) => (
             <TabIcon
               name={{ ios: 'person', android: 'person' }}

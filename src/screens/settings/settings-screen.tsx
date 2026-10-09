@@ -31,10 +31,10 @@ export function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text variant="display" accessibilityRole="header">
-          settings
+          Settings
         </Text>
 
-        <Section title="your profile">
+        <Section title="Your profile">
           {me.data ? (
             <>
               <AvatarPicker me={me.data} />
@@ -43,7 +43,7 @@ export function SettingsScreen() {
           ) : me.isError ? (
             <View style={styles.state}>
               <Text variant="subhead">{errorMessage(me.error)}</Text>
-              <Button title="try again" onPress={() => me.refetch()} style={styles.left} />
+              <Button title="Try again" onPress={() => me.refetch()} style={styles.left} />
             </View>
           ) : (
             <ActivityIndicator
@@ -54,27 +54,27 @@ export function SettingsScreen() {
           )}
         </Section>
 
-        <Section title="about">
+        <Section title="About">
           <TextLink
-            title="terms of use"
+            title="Terms of use"
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/terms`)}
           />
           <TextLink
-            title="privacy policy"
+            title="Privacy policy"
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/privacy`)}
           />
           <TextLink
-            title="support"
+            title="Support"
             role="link"
             onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/support`)}
           />
         </Section>
 
-        <Section title="account">
-          <Text variant="subhead">signed in as {session?.user.email}</Text>
-          <TextLink title="blocked artists" role="link" onPress={() => router.push('/blocked')} />
+        <Section title="Account">
+          <Text variant="subhead">Signed in as {session?.user.email}</Text>
+          <TextLink title="Blocked artists" role="link" onPress={() => router.push('/blocked')} />
           <AccountActions />
         </Section>
       </ScrollView>

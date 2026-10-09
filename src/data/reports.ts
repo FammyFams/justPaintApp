@@ -33,14 +33,14 @@ export type ReportValues = {
 export function useSendReport() {
   return useMutation({
     mutationFn: async (values: ReportValues) => {
-      if (!values.reason) throw new Error('pick a reason.');
+      if (!values.reason) throw new Error('Pick a reason.');
       if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) {
-        throw new Error('enter an email we can reply to.');
+        throw new Error('Enter an email we can reply to.');
       }
       if (values.signature.trim().length < 2) {
-        throw new Error('type your full name as your signature.');
+        throw new Error('Type your full name as your signature.');
       }
-      if (!values.goodFaith) throw new Error('confirm the statement above to send the report.');
+      if (!values.goodFaith) throw new Error('Confirm the statement above to send the report.');
       const answer = await api<{ reference: number }>('reports', {
         method: 'POST',
         body: {

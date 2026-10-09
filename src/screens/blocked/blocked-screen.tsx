@@ -23,10 +23,10 @@ export function BlockedScreen() {
       >
         <View style={styles.heading}>
           <Text variant="display" accessibilityRole="header">
-            blocked artists
+            Blocked artists
           </Text>
           <Text variant="subhead">
-            their paintings and comments are hidden from you. they aren&apos;t told.
+            Their paintings and comments are hidden from you. They aren&apos;t told.
           </Text>
         </View>
 
@@ -34,16 +34,16 @@ export function BlockedScreen() {
 
         {blocks.data ? (
           blocks.data.length === 0 ? (
-            <Text variant="subhead">you haven&apos;t blocked anyone.</Text>
+            <Text variant="subhead">You haven&apos;t blocked anyone.</Text>
           ) : (
             blocks.data.map((artist) => (
               <View key={artist.id} style={styles.row}>
                 <View style={styles.words}>
                   <Text variant="headline">{artist.displayName}</Text>
-                  <Text variant="caption">blocked {formatDate(artist.blockedAt)}</Text>
+                  <Text variant="caption">Blocked {formatDate(artist.blockedAt)}</Text>
                 </View>
                 <Button
-                  title="unblock"
+                  title="Unblock"
                   loading={unblock.isPending && unblock.variables === artist.id}
                   disabled={unblock.isPending && unblock.variables !== artist.id}
                   onPress={() => unblock.mutate(artist.id)}
@@ -54,7 +54,7 @@ export function BlockedScreen() {
         ) : blocks.isError ? (
           <View style={styles.state}>
             <Text variant="subhead">{errorMessage(blocks.error)}</Text>
-            <Button title="try again" onPress={() => blocks.refetch()} style={styles.left} />
+            <Button title="Try again" onPress={() => blocks.refetch()} style={styles.left} />
           </View>
         ) : (
           <ActivityIndicator

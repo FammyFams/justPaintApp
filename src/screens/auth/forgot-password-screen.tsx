@@ -28,19 +28,19 @@ export function ForgotPasswordScreen() {
   if (sentTo) {
     return (
       <CheckEmail
-        message={`if there's an account for ${sentTo}, we sent it a link to pick a new password. it can take a few minutes, so check your spam folder too. the link opens justpaint.art: pick the new password there, then sign in here.`}
-        action={<Button title="back to sign in" onPress={backToSignIn} />}
+        message={`If there's an account for ${sentTo}, we sent it a link to pick a new password. It can take a few minutes, so check your spam folder too. The link opens justpaint.art: pick the new password there, then sign in here.`}
+        action={<Button title="Back to sign in" onPress={backToSignIn} />}
       />
     );
   }
 
   return (
     <AuthForm
-      title="forgot your password?"
-      intro="enter the email you signed up with and we'll send you a link to pick a new one."
+      title="Forgot your password?"
+      intro="Enter the email you signed up with and we'll send you a link to pick a new one."
     >
       <TextField
-        label="email"
+        label="Email"
         value={email}
         onChangeText={setEmail}
         placeholder="you@example.com"
@@ -57,7 +57,7 @@ export function ForgotPasswordScreen() {
 
       <Button
         variant="circled"
-        title="send reset link"
+        title="Send reset link"
         loading={reset.isPending}
         onPress={submit}
         style={styles.submit}

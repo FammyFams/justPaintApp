@@ -16,7 +16,7 @@ export function ReasonPicker({ value, onChange }: ReasonPickerProps) {
   return (
     <View accessibilityRole="radiogroup" style={styles.group}>
       <Text variant="subhead" tone="default" style={styles.label}>
-        what&apos;s wrong with it?
+        What&apos;s wrong with it?
       </Text>
       {reasons.map((reason) => {
         const on = value === reason;

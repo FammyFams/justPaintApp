@@ -85,7 +85,7 @@ export function PostForm() {
         >
           <View style={styles.heading}>
             <Text variant="display" accessibilityRole="header">
-              post
+              Post
             </Text>
             <Text tone="muted">what did you paint today?</Text>
             {me.data?.displayName ? (
@@ -102,26 +102,26 @@ export function PostForm() {
           <PhotoBox photo={photo} busy={preparing} onPick={pick} />
           {photoProblem === 'no-camera' ? (
             <View>
-              <FormError message="the camera is off for justPaint Art. turn it on in settings, or choose a photo instead." />
-              <TextLink title="open settings" onPress={() => Linking.openSettings()} />
+              <FormError message="The camera is off for justPaint Art. Turn it on in settings, or choose a photo instead." />
+              <TextLink title="Open settings" onPress={() => Linking.openSettings()} />
             </View>
           ) : photoProblem === 'unreadable' ? (
-            <FormError message="couldn't open that photo. try another one." />
+            <FormError message="Couldn't open that photo. Try another one." />
           ) : null}
 
           <TextField
-            label="title"
+            label="Title"
             value={title}
             onChangeText={edit(setTitle)}
-            placeholder="untitled"
+            placeholder="Untitled"
             maxLength={TITLE_MAX}
             returnKeyType="next"
           />
           <TextField
-            label="description"
+            label="Description"
             value={description}
             onChangeText={edit(setDescription)}
-            placeholder="materials, process, what you were thinking about"
+            placeholder="Materials, process, what you were thinking about"
             multiline
             maxLength={DESCRIPTION_MAX}
           />
@@ -132,10 +132,10 @@ export function PostForm() {
 
           <View style={styles.terms}>
             <Text variant="caption">
-              posting confirms you&apos;re 13 or older and agree to the terms of use.
+              Posting confirms you&apos;re 13 or older and agree to the terms of use.
             </Text>
             <TextLink
-              title="terms of use"
+              title="Terms of use"
               role="link"
               onPress={() => WebBrowser.openBrowserAsync(`${env.siteUrl}/terms`)}
             />
@@ -143,7 +143,7 @@ export function PostForm() {
 
           <Button
             variant="circled"
-            title="post painting"
+            title="Post painting"
             loading={post.isPending}
             disabled={preparing}
             onPress={submit}

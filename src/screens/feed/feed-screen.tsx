@@ -37,7 +37,7 @@ export function FeedScreen() {
       <Text tone="muted">what did you paint today?</Text>
       <Text variant="subhead">a painting community for beginners.</Text>
       {feed.isRefetchError && (
-        <Text variant="caption">couldn&apos;t refresh. showing the paintings you already have.</Text>
+        <Text variant="caption">Couldn&apos;t refresh. Showing the paintings you already have.</Text>
       )}
     </View>
   );
@@ -49,25 +49,25 @@ export function FeedScreen() {
     </View>
   ) : feed.isError ? (
     <View style={styles.state}>
-      <Text variant="headline">couldn&apos;t load the paintings</Text>
+      <Text variant="headline">Couldn&apos;t load the paintings</Text>
       <Text variant="subhead" style={styles.center}>
-        the server may be busy. check your connection and try again.
+        The server may be busy. Check your connection and try again.
       </Text>
-      <Button title="try again" onPress={() => feed.refetch()} style={styles.retry} />
+      <Button title="Try again" onPress={() => feed.refetch()} style={styles.retry} />
     </View>
   ) : (
     <View style={styles.state}>
       <Text variant="prompt" tone="muted">
-        nothing here yet
+        Nothing here yet
       </Text>
-      <Text variant="subhead">check back soon.</Text>
+      <Text variant="subhead">Check back soon.</Text>
     </View>
   );
 
   const footer = feed.isFetchNextPageError ? (
     <View style={styles.state}>
-      <Text variant="subhead">couldn&apos;t load more paintings.</Text>
-      <Button title="try again" onPress={() => feed.fetchNextPage()} />
+      <Text variant="subhead">Couldn&apos;t load more paintings.</Text>
+      <Button title="Try again" onPress={() => feed.fetchNextPage()} />
     </View>
   ) : feed.isFetchingNextPage ? (
     <View style={styles.footer}>

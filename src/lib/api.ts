@@ -42,7 +42,7 @@ export async function api<T>(path: string, { method = 'GET', body }: ApiInit = {
       body: sendJson ? JSON.stringify(body) : (body as FormData | undefined),
     });
   } catch {
-    throw new ApiError(0, 'network', "couldn't reach justpaint.art. check your connection.");
+    throw new ApiError(0, 'network', "Couldn't reach justpaint.art. Check your connection.");
   }
 
   const json = await response.json().catch(() => null);
@@ -50,7 +50,7 @@ export async function api<T>(path: string, { method = 'GET', body }: ApiInit = {
     throw new ApiError(
       response.status,
       json?.error?.code ?? 'unknown',
-      json?.error?.message ?? 'something went wrong. try again.',
+      json?.error?.message ?? 'Something went wrong. Try again.',
     );
   }
   return json as T;

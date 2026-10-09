@@ -300,10 +300,10 @@ export type NewPainting = {
 function checkNewPainting(values: NewPainting): asserts values is NewPainting & {
   photo: NonNullable<NewPainting['photo']>;
 } {
-  if (!values.photo) throw new Error('add a photo of your painting.');
-  if (values.title.trim().length < 2) throw new Error('give it a title.');
-  if (!values.description.trim()) throw new Error('add a description.');
-  if (values.tags.length === 0) throw new Error('pick at least one tag.');
+  if (!values.photo) throw new Error('Add a photo of your painting.');
+  if (values.title.trim().length < 2) throw new Error('Give it a title.');
+  if (!values.description.trim()) throw new Error('Add a description.');
+  if (values.tags.length === 0) throw new Error('Pick at least one tag.');
 }
 
 // Posts through the website (W6): 4 MB at most, re-encoded there with no

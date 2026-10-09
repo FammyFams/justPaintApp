@@ -38,9 +38,9 @@ export function MyProfile() {
         <View style={styles.state}>
           {me.isError ? (
             <>
-              <Text variant="headline">couldn&apos;t load your profile</Text>
+              <Text variant="headline">Couldn&apos;t load your profile</Text>
               <Text variant="subhead">{errorMessage(me.error)}</Text>
-              <Button title="try again" onPress={() => me.refetch()} />
+              <Button title="Try again" onPress={() => me.refetch()} />
             </>
           ) : (
             <ActivityIndicator color={colors.mutedForeground} accessibilityLabel="loading your profile" />
@@ -53,7 +53,7 @@ export function MyProfile() {
   const name = me.data.displayName ?? 'you';
   const count = paintings.data?.length;
   const facts = [
-    me.data.joinedAt && `joined ${joinedFormat.format(new Date(me.data.joinedAt)).toLowerCase()}`,
+    me.data.joinedAt && `Joined ${joinedFormat.format(new Date(me.data.joinedAt))}`,
     count !== undefined && `${count} ${count === 1 ? 'painting' : 'paintings'}`,
   ].filter(Boolean);
 
@@ -72,7 +72,7 @@ export function MyProfile() {
             {name}
           </Text>
           <Button
-            title="edit profile"
+            title="Edit profile"
             onPress={() => router.push('/settings')}
             style={styles.editProfile}
           />
@@ -81,7 +81,7 @@ export function MyProfile() {
       <Text variant="subhead">{facts.join(' · ')}</Text>
       {me.data.bio ? <Text style={styles.bio}>{me.data.bio}</Text> : null}
       {(me.isRefetchError || paintings.isRefetchError) && (
-        <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
+        <Text variant="caption">Couldn&apos;t refresh. Showing what you already have.</Text>
       )}
     </View>
   );
@@ -92,13 +92,13 @@ export function MyProfile() {
     </View>
   ) : paintings.isError ? (
     <View style={styles.state}>
-      <Text variant="subhead">couldn&apos;t load your paintings.</Text>
-      <Button title="try again" onPress={() => paintings.refetch()} />
+      <Text variant="subhead">Couldn&apos;t load your paintings.</Text>
+      <Button title="Try again" onPress={() => paintings.refetch()} />
     </View>
   ) : (
     <View style={styles.state}>
-      <Text variant="subhead">you haven&apos;t posted a painting yet.</Text>
-      <Button title="post a painting" onPress={() => router.navigate('/post')} />
+      <Text variant="subhead">You haven&apos;t posted a painting yet.</Text>
+      <Button title="Post a painting" onPress={() => router.navigate('/post')} />
     </View>
   );
 

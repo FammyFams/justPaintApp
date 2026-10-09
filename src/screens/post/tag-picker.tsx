@@ -64,8 +64,8 @@ export function TagPicker({ selected, onChange }: TagPickerProps) {
         <ActivityIndicator color={colors.mutedForeground} accessibilityLabel="loading tags" style={styles.start} />
       ) : (
         <View style={styles.error}>
-          <Text variant="subhead">couldn&apos;t load the tags.</Text>
-          <Button title="try again" onPress={() => tags.refetch()} />
+          <Text variant="subhead">Couldn&apos;t load the tags.</Text>
+          <Button title="Try again" onPress={() => tags.refetch()} />
         </View>
       )}
     </View>

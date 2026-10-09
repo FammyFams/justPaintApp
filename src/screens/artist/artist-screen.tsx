@@ -39,16 +39,16 @@ export function ArtistScreen() {
             <ActivityIndicator color={colors.mutedForeground} accessibilityLabel="loading artist" />
           ) : artist.isError ? (
             <>
-              <Text variant="headline">couldn&apos;t load this artist</Text>
-              <Text variant="subhead">the server may be busy. check your connection and try again.</Text>
-              <Button title="try again" onPress={() => artist.refetch()} />
+              <Text variant="headline">Couldn&apos;t load this artist</Text>
+              <Text variant="subhead">The server may be busy. Check your connection and try again.</Text>
+              <Button title="Try again" onPress={() => artist.refetch()} />
             </>
           ) : (
             <>
               <Text variant="prompt" tone="muted">
-                no artist called {name}
+                No artist called {name}
               </Text>
-              <Button title="back" onPress={() => router.back()} />
+              <Button title="Back" onPress={() => router.back()} />
             </>
           )}
         </View>
@@ -62,7 +62,7 @@ export function ArtistScreen() {
     <Stack.Screen
       options={{
         headerRight: () => (
-          <ReportBlockMenu label={`more options for ${target.name}`} artist={target} />
+          <ReportBlockMenu label={`More options for ${target.name}`} artist={target} />
         ),
       }}
     />
@@ -83,12 +83,12 @@ export function ArtistScreen() {
         {artist.data.displayName}
       </Text>
       <Text variant="subhead">
-        joined {joinedFormat.format(new Date(artist.data.joinedAt)).toLowerCase()}
+        Joined {joinedFormat.format(new Date(artist.data.joinedAt))}
         {count !== undefined && ` · ${count} ${count === 1 ? 'painting' : 'paintings'}`}
       </Text>
       {artist.data.bio ? <Text style={styles.bio}>{artist.data.bio}</Text> : null}
       {(artist.isRefetchError || paintings.isRefetchError) && (
-        <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
+        <Text variant="caption">Couldn&apos;t refresh. Showing what you already have.</Text>
       )}
     </View>
   );
@@ -99,12 +99,12 @@ export function ArtistScreen() {
     </View>
   ) : paintings.isError ? (
     <View style={styles.state}>
-      <Text variant="subhead">couldn&apos;t load the paintings.</Text>
-      <Button title="try again" onPress={() => paintings.refetch()} />
+      <Text variant="subhead">Couldn&apos;t load the paintings.</Text>
+      <Button title="Try again" onPress={() => paintings.refetch()} />
     </View>
   ) : (
     <View style={styles.state}>
-      <Text variant="subhead">no paintings yet.</Text>
+      <Text variant="subhead">No paintings yet.</Text>
     </View>
   );
 

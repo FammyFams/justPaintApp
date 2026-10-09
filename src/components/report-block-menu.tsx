@@ -26,20 +26,20 @@ export function ReportBlockMenu({ label, report, artist }: ReportBlockMenuProps)
   const own = !!artist && artist.id === userId;
 
   const actions: MenuAction[] = [];
-  if (report && !own) actions.push({ id: 'report', title: 'report' });
+  if (report && !own) actions.push({ id: 'report', title: 'Report' });
   if (artist && !own) {
-    actions.push({ id: 'block', title: `block ${artist.name}`, attributes: { destructive: true } });
+    actions.push({ id: 'block', title: `Block ${artist.name}`, attributes: { destructive: true } });
   }
   if (actions.length === 0) return null;
 
   const confirmBlock = (target: { id: string; name: string }) =>
     Alert.alert(
-      `block ${target.name}?`,
-      "you won't see their paintings or comments. they won't be told, and you can unblock them in settings.",
+      `Block ${target.name}?`,
+      "You won't see their paintings or comments. They won't be told, and you can unblock them in settings.",
       [
-        { text: 'cancel', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'block',
+          text: 'Block',
           style: 'destructive',
           onPress: () =>
             block.mutate(target.id, {

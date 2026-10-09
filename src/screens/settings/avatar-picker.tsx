@@ -45,7 +45,7 @@ export function AvatarPicker({ me }: { me: Me }) {
     try {
       uri = await pickSquare();
     } catch {
-      setPickError("couldn't open that photo. try a different one.");
+      setPickError("Couldn't open that photo. Try a different one.");
       return;
     }
     if (uri) {
@@ -56,10 +56,10 @@ export function AvatarPicker({ me }: { me: Me }) {
   };
 
   const remove = () =>
-    Alert.alert('remove your picture?', 'your initials show instead.', [
-      { text: 'cancel', style: 'cancel' },
+    Alert.alert('Remove your picture?', 'Your initials show instead.', [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: 'remove',
+        text: 'Remove',
         style: 'destructive',
         onPress: () =>
           avatar.mutate(null, {
@@ -74,14 +74,14 @@ export function AvatarPicker({ me }: { me: Me }) {
         <Avatar name={me.displayName ?? 'you'} url={me.avatarUrl} />
         <View style={styles.actions}>
           <Button
-            title="change picture"
+            title="Change picture"
             onPress={change}
             loading={avatar.isPending && avatar.variables !== null}
             disabled={avatar.isPending}
           />
           {me.avatarUrl ? (
             <Button
-              title="remove picture"
+              title="Remove picture"
               onPress={remove}
               loading={avatar.isPending && avatar.variables === null}
               disabled={avatar.isPending}

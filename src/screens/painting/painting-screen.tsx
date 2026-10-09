@@ -61,7 +61,7 @@ export function PaintingScreen() {
               </Pressable>
               {painting.data && (
                 <ReportBlockMenu
-                  label={`more options for ${painting.data.title}`}
+                  label={`More options for ${painting.data.title}`}
                   report={{ paintingId: id, title: painting.data.title }}
                   artist={artist}
                 />
@@ -111,7 +111,7 @@ export function PaintingScreen() {
                     style={({ pressed }) => [styles.artistLink, pressed && styles.pressed]}
                   >
                     <Text variant="subhead">
-                      by{' '}
+                      By{' '}
                       <Text variant="subhead" tone="primary" style={styles.artistName}>
                         {painting.data.authorName}
                       </Text>
@@ -120,7 +120,7 @@ export function PaintingScreen() {
                 </Link>
               ) : (
                 <Text variant="subhead">
-                  by{' '}
+                  By{' '}
                   <Text variant="subhead" tone="default">
                     {painting.data.authorName}
                   </Text>
@@ -150,16 +150,16 @@ export function PaintingScreen() {
         </View>
       ) : painting.isError ? (
         <View style={styles.state}>
-          <Text variant="headline">couldn&apos;t load this painting</Text>
-          <Text variant="subhead">the server may be busy. check your connection and try again.</Text>
-          <Button title="try again" onPress={() => painting.refetch()} />
+          <Text variant="headline">Couldn&apos;t load this painting</Text>
+          <Text variant="subhead">The server may be busy. Check your connection and try again.</Text>
+          <Button title="Try again" onPress={() => painting.refetch()} />
         </View>
       ) : (
         <View style={styles.state}>
           <Text variant="prompt" tone="muted">
-            this painting isn&apos;t here anymore
+            This painting isn&apos;t here anymore
           </Text>
-          <Button title="back" onPress={() => router.back()} />
+          <Button title="Back" onPress={() => router.back()} />
         </View>
       )}
     </PaperBackground>

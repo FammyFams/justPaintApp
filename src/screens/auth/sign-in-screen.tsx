@@ -24,9 +24,9 @@ export function SignInScreen() {
   };
 
   return (
-    <AuthForm title="welcome back." intro="sign in to post, heart and comment.">
+    <AuthForm title="Welcome back." intro="Sign in to post, heart and comment.">
       <TextField
-        label="email"
+        label="Email"
         value={email}
         onChangeText={setEmail}
         placeholder="you@example.com"
@@ -43,7 +43,7 @@ export function SignInScreen() {
       <View>
         <TextField
           ref={passwordField}
-          label="password"
+          label="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -54,22 +54,22 @@ export function SignInScreen() {
           returnKeyType="go"
           onSubmitEditing={submit}
         />
-        <TextLink title="forgot password?" onPress={() => router.push('/forgot-password')} />
+        <TextLink title="Forgot password?" onPress={() => router.push('/forgot-password')} />
       </View>
 
       <FormError message={signIn.error && errorMessage(signIn.error)} />
 
       <Button
         variant="circled"
-        title="sign in"
+        title="Sign in"
         loading={signIn.isPending}
         onPress={submit}
         style={styles.submit}
       />
 
       <View style={styles.switch}>
-        <Text variant="subhead">new here?</Text>
-        <TextLink title="create an account" onPress={() => router.replace('/sign-up')} />
+        <Text variant="subhead">New here?</Text>
+        <TextLink title="Create an account" onPress={() => router.replace('/sign-up')} />
       </View>
     </AuthForm>
   );

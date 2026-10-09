@@ -42,5 +42,5 @@ export function ShareCalendarButton({ challenge, imageUrl }: ShareCalendarButton
     }
   };
 
-  return <Button title="share calendar" onPress={share} loading={busy} />;
+  return <Button title="Share calendar" onPress={share} loading={busy} />;
 }

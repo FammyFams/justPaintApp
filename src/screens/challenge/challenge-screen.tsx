@@ -21,7 +21,7 @@ const dayFormat = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   timeZone: 'UTC',
 });
-const formatDay = (date: string) => dayFormat.format(new Date(date)).toLowerCase();
+const formatDay = (date: string) => dayFormat.format(new Date(date));
 
 // The website's calendar picture (also on its challenge page). A static file on
 // Vercel's CDN, kept in the disk cache, so each phone loads it about once.
@@ -63,9 +63,9 @@ export function ChallengeScreen() {
       <Text variant="display" accessibilityRole="header">
         {challenge.data?.name ?? 'october painting challenge'}
       </Text>
-      <Text tone="muted">one prompt a day, all month long. paint along with everyone.</Text>
+      <Text tone="muted">One prompt a day, all month long. Paint along with everyone.</Text>
       {(entries.isRefetchError || challenge.isRefetchError) && (
-        <Text variant="caption">couldn&apos;t refresh. showing the entries you already have.</Text>
+        <Text variant="caption">Couldn&apos;t refresh. Showing the entries you already have.</Text>
       )}
       <View style={styles.today}>
         {challenge.data ? (
@@ -79,7 +79,7 @@ export function ChallengeScreen() {
                     <ShareCalendarButton challenge={challenge.data} imageUrl={CALENDAR_URL} />
                   )}
                   <Button
-                    title={showCalendar ? 'hide calendar' : 'show calendar'}
+                    title={showCalendar ? 'Hide calendar' : 'Show calendar'}
                     onPress={() => setShowCalendar((shown) => !shown)}
                   />
                 </View>
@@ -93,7 +93,7 @@ export function ChallengeScreen() {
                   label={calendarLabel(challenge.data)}
                 />
                 <Text variant="caption" style={styles.center}>
-                  pinch to zoom.
+                  Pinch to zoom.
                 </Text>
               </View>
             )}
@@ -106,8 +106,8 @@ export function ChallengeScreen() {
           />
         ) : (
           <View style={styles.inline}>
-            <Text variant="subhead">couldn&apos;t load today&apos;s prompt.</Text>
-            <Button title="try again" onPress={() => challenge.refetch()} />
+            <Text variant="subhead">Couldn&apos;t load today&apos;s prompt.</Text>
+            <Button title="Try again" onPress={() => challenge.refetch()} />
           </View>
         )}
       </View>
@@ -121,25 +121,25 @@ export function ChallengeScreen() {
     </View>
   ) : entries.isError ? (
     <View style={styles.state}>
-      <Text variant="headline">couldn&apos;t load the entries</Text>
+      <Text variant="headline">Couldn&apos;t load the entries</Text>
       <Text variant="subhead" style={styles.center}>
-        the server may be busy. check your connection and try again.
+        The server may be busy. Check your connection and try again.
       </Text>
-      <Button title="try again" onPress={() => entries.refetch()} />
+      <Button title="Try again" onPress={() => entries.refetch()} />
     </View>
   ) : (
     <View style={styles.state}>
       <Text variant="prompt" tone="muted">
-        no entries yet
+        No entries yet
       </Text>
-      <Text variant="subhead">be the first to post one.</Text>
+      <Text variant="subhead">Be the first to post one.</Text>
     </View>
   );
 
   const footer = entries.isFetchNextPageError ? (
     <View style={styles.state}>
-      <Text variant="subhead">couldn&apos;t load more entries.</Text>
-      <Button title="try again" onPress={() => entries.fetchNextPage()} />
+      <Text variant="subhead">Couldn&apos;t load more entries.</Text>
+      <Button title="Try again" onPress={() => entries.fetchNextPage()} />
     </View>
   ) : entries.isFetchingNextPage ? (
     <View style={styles.footer}>
@@ -157,11 +157,11 @@ export function ChallengeScreen() {
           renderSection={(day) =>
             typeof day === 'number' ? (
               <DayHeading
-                date={prompts?.[day - 1] ? formatDay(prompts[day - 1].date) : `october ${day}`}
+                date={prompts?.[day - 1] ? formatDay(prompts[day - 1].date) : `October ${day}`}
                 prompt={prompts?.[day - 1]?.prompt}
               />
             ) : (
-              <DayHeading date="other entries" />
+              <DayHeading date="Other entries" />
             )
           }
           // Today's prompt is already in the header, so its day heading waits for a scroll.

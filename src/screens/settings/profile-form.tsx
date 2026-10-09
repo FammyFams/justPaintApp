@@ -37,7 +37,7 @@ export function ProfileForm({ me }: { me: Me }) {
   return (
     <View style={styles.form}>
       <TextField
-        label="display name"
+        label="Display name"
         hint="shown on your paintings"
         value={displayName}
         onChangeText={edit(setDisplayName)}
@@ -47,7 +47,7 @@ export function ProfileForm({ me }: { me: Me }) {
         textContentType="nickname"
       />
       <TextField
-        label="bio"
+        label="Bio"
         hint={`optional, up to ${BIO_MAX} characters`}
         value={bio}
         onChangeText={edit(setBio)}
@@ -55,9 +55,9 @@ export function ProfileForm({ me }: { me: Me }) {
         multiline
       />
       <FormError message={save.error && errorMessage(save.error)} />
-      {save.isSuccess && <Text variant="subhead">saved.</Text>}
+      {save.isSuccess && <Text variant="subhead">Saved.</Text>}
       <Button
-        title="save changes"
+        title="Save changes"
         disabled={!changed}
         loading={save.isPending}
         onPress={submit}

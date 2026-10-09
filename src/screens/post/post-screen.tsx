@@ -9,8 +9,8 @@ export function PostScreen() {
   if (!signedIn) {
     return (
       <SignedOutScreen
-        title="post"
-        note="sign in to post a painting."
+        title="Post"
+        note="Sign in to post a painting."
       />
     );
   }

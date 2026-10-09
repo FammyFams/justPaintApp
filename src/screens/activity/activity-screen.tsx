@@ -9,8 +9,8 @@ export function ActivityScreen() {
   if (!signedIn) {
     return (
       <SignedOutScreen
-        title="activity"
-        note="hearts and comments on your paintings."
+        title="Activity"
+        note="Hearts and comments on your paintings."
       />
     );
   }
