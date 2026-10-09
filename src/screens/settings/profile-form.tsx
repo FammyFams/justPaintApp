@@ -63,7 +63,6 @@ export function ProfileForm({ me }: { me: Me }) {
         onPress={submit}
         style={styles.button}
       />
-      <Text variant="caption">to change your picture, go to justpaint.art.</Text>
     </View>
   );
 }

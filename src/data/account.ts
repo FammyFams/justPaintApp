@@ -5,6 +5,7 @@ import {
   type Session,
 } from '@supabase/supabase-js';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { File as LocalFile } from 'expo-file-system';
 
 import { api, ApiError } from '@/lib/api';
 import { env } from '@/lib/env';
@@ -210,6 +211,25 @@ export function useUpdateProfile() {
       for (const key of ['paintings', 'artists', 'comments']) {
         queryClient.invalidateQueries({ queryKey: [key] });
       }
+    },
+  });
+}
+
+// Your picture, through the website, which crops it to the middle square, saves
+// a 256 px copy with no metadata and deletes the old one. Pass a local photo to
+// change it, or null to go back to initials.
+export function useSetAvatar() {
+  const { userId } = useSession();
+  return useMutation({
+    mutationFn: async (uri: string | null) => {
+      if (!uri) return api<{ avatarUrl: null }>('profile/avatar', { method: 'DELETE' });
+      const form = new FormData();
+      // An expo-file-system File, like painting uploads (data/paintings.ts).
+      form.append('image', new LocalFile(uri));
+      return api<{ avatarUrl: string }>('profile/avatar', { method: 'POST', body: form });
+    },
+    onSuccess: ({ avatarUrl }) => {
+      queryClient.setQueryData<Me>(profileKey(userId), (me) => me && { ...me, avatarUrl });
     },
   });
 }

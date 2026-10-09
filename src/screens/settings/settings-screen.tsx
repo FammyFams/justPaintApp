@@ -10,6 +10,7 @@ import { TextLink } from '@/components/text-link';
 import { errorMessage, useMe, useSession } from '@/data/account';
 import { env } from '@/lib/env';
 import { AccountActions } from '@/screens/settings/account-actions';
+import { AvatarPicker } from '@/screens/settings/avatar-picker';
 import { ProfileForm } from '@/screens/settings/profile-form';
 import { colors, spacing } from '@/theme';
 
@@ -35,7 +36,10 @@ export function SettingsScreen() {
 
         <Section title="your profile">
           {me.data ? (
-            <ProfileForm me={me.data} />
+            <>
+              <AvatarPicker me={me.data} />
+              <ProfileForm me={me.data} />
+            </>
           ) : me.isError ? (
             <View style={styles.state}>
               <Text variant="subhead">{errorMessage(me.error)}</Text>
