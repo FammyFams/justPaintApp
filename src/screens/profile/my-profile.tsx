@@ -61,23 +61,28 @@ export function MyProfile() {
     <View style={styles.header}>
       <View style={styles.identity}>
         <Avatar name={name} url={me.data.avatarUrl} />
-        {/* Long names shrink to stay on the picture's line. */}
-        <Text
-          variant="largeTitle"
-          accessibilityRole="header"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          style={styles.name}
-        >
-          {name}
-        </Text>
+        <View style={styles.nameColumn}>
+          {/* Long names shrink to stay on the picture's line. */}
+          <Text
+            variant="largeTitle"
+            accessibilityRole="header"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            {name}
+          </Text>
+          <Button
+            title="edit profile"
+            onPress={() => router.push('/settings')}
+            style={styles.editProfile}
+          />
+        </View>
       </View>
       <Text variant="subhead">{facts.join(' · ')}</Text>
       {me.data.bio ? <Text style={styles.bio}>{me.data.bio}</Text> : null}
       {(me.isRefetchError || paintings.isRefetchError) && (
         <Text variant="caption">couldn&apos;t refresh. showing what you already have.</Text>
       )}
-      <Button title="edit profile" onPress={() => router.push('/settings')} style={styles.settings} />
     </View>
   );
 
@@ -130,15 +135,14 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     marginBottom: spacing.sm,
   },
-  name: {
+  nameColumn: {
     flex: 1,
+  },
+  editProfile: {
+    alignSelf: 'flex-start',
   },
   bio: {
     paddingTop: spacing.sm,
-  },
-  settings: {
-    alignSelf: 'flex-start',
-    marginTop: spacing.md,
   },
   state: {
     flex: 1,
