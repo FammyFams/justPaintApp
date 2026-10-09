@@ -59,7 +59,8 @@
           "cameraPermission": "justPaint Art uses the camera so you can take a picture of your painting.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "./plugins/with-upload-signing"
     ],
     "experiments": {
       "typedRoutes": true,
