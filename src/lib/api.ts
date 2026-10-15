@@ -54,6 +54,9 @@ export async function api<T>(path: string, { method = 'GET', body }: ApiInit = {
   }
 
   const json = await response.json().catch(() => null);
+  // A sign-in token was sent and refused: that login is over (ended elsewhere,
+  // or the account deleted). Forgetting it shows "You were logged out."
+  if (response.status === 401 && token) await supabase.auth.signOut({ scope: 'local' });
   if (!response.ok) {
     throw new ApiError(
       response.status,

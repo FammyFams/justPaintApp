@@ -9,6 +9,7 @@ import { File as LocalFile } from 'expo-file-system';
 
 import { api, ApiError } from '@/lib/api';
 import { env } from '@/lib/env';
+import { expectLogout, noticeLogout } from '@/lib/logged-out';
 import { queryClient } from '@/lib/query-client';
 import { supabase } from '@/lib/supabase';
 
@@ -26,9 +27,10 @@ let lastUserId: string | null | undefined;
 // Supabase reports every change: the session read from storage at launch, sign
 // in, sign out, token refresh, and a refresh that fails because the account was
 // deleted or signed out elsewhere. Keep the cached session in step.
-supabase.auth.onAuthStateChange((_event, session) => {
+supabase.auth.onAuthStateChange((event, session) => {
   queryClient.setQueryData(SESSION_KEY, session);
   const userId = session?.user.id ?? null;
+  if (event === 'SIGNED_OUT' && lastUserId) noticeLogout();
   if (lastUserId !== undefined && userId !== lastUserId) {
     queryClient.removeQueries({ queryKey: ME_KEY });
   }
@@ -245,6 +247,7 @@ export function useDeleteAccount() {
   return useMutation({
     mutationFn: async () => {
       await api<{ deleted: true }>('account', { method: 'DELETE' });
+      expectLogout();
       await supabase.auth.signOut({ scope: 'local' });
     },
     onSuccess: () => {
@@ -261,6 +264,7 @@ export function useDeleteAccount() {
 export function useSignOut() {
   return useMutation({
     mutationFn: async () => {
+      expectLogout();
       await supabase.auth.signOut({ scope: 'local' });
     },
   });
