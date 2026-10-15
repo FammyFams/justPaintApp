@@ -13,6 +13,7 @@ import { TextLink } from '@/components/text-link';
 import { errorMessage, useMe } from '@/data/account';
 import { DESCRIPTION_MAX, TITLE_MAX, usePostPainting } from '@/data/paintings';
 import { env } from '@/lib/env';
+import { showToast } from '@/lib/toast';
 import { ChallengeOption } from '@/screens/post/challenge-option';
 import { PhotoBox } from '@/screens/post/photo-box';
 import { pickPhoto, type PickedPhoto } from '@/screens/post/pick-photo';
@@ -68,6 +69,7 @@ export function PostForm() {
           setChallengeDay(null);
           post.reset();
           router.push({ pathname: '/painting/[id]', params: { id } });
+          showToast({ id: 'posted', title: 'Posted successfully.' });
         },
       },
     );
