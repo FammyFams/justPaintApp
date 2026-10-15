@@ -22,7 +22,7 @@ import { TagPicker } from '@/screens/post/tag-picker';
 import { spacing } from '@/theme';
 
 // The website's upload form, for signed-in people. Posting opens the new
-// painting; the form starts fresh for the next one.
+// painting over the profile; the form starts fresh for the next one.
 export function PostForm() {
   const me = useMe();
   const [photo, setPhoto] = useState<PickedPhoto | null>(null);
@@ -69,6 +69,8 @@ export function PostForm() {
           setTags([]);
           setChallengeDay(null);
           post.reset();
+          // Opened over the Profile tab, so Back lands on the profile, not the form.
+          router.navigate('/profile');
           router.push({ pathname: '/painting/[id]', params: { id } });
           showToast({ id: 'posted', title: 'Posted successfully.' });
         },
