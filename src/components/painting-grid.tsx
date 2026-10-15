@@ -75,52 +75,61 @@ export function PaintingGrid({
   const stickyHeaderIndices = items.flatMap((item, i) => (item.type === 'section' ? [i] : []));
 
   return (
-    <FlashList
-      ref={listRef}
-      showsVerticalScrollIndicator={false}
-      data={items}
-      stickyHeaderIndices={stickyHeaderIndices}
-      keyExtractor={(item) =>
-        item.type === 'painting' ? item.painting.id : `section-${item.section}`
-      }
-      getItemType={(item) => item.type}
-      renderItem={({ item, target }) =>
-        item.type === 'section' ? (
-          item.floatOnly && target !== 'StickyHeader' ? (
-            <View style={styles.sectionGap} />
+    // A plain wrapper, so the list sits at 0 inside its parent. FlashList measures
+    // the header from the list's own position, which comes back as its offset in
+    // the parent (the safe-area padding on Challenge): the header looked 52pt
+    // short there and day headings floated in early, twice for a moment.
+    <View style={styles.fill}>
+      <FlashList
+        ref={listRef}
+        showsVerticalScrollIndicator={false}
+        data={items}
+        stickyHeaderIndices={stickyHeaderIndices}
+        keyExtractor={(item) =>
+          item.type === 'painting' ? item.painting.id : `section-${item.section}`
+        }
+        getItemType={(item) => item.type}
+        renderItem={({ item, target }) =>
+          item.type === 'section' ? (
+            item.floatOnly && target !== 'StickyHeader' ? (
+              <View style={styles.sectionGap} />
+            ) : (
+              <View style={styles.section}>{renderSection?.(item.section)}</View>
+            )
           ) : (
-            <View style={styles.section}>{renderSection?.(item.section)}</View>
+            <View style={oneColumn ? styles.row : styles.cell}>
+              <PaintingCard painting={item.painting} bleed={oneColumn} showArtist={showArtist} />
+            </View>
           )
-        ) : (
-          <View style={oneColumn ? styles.row : styles.cell}>
-            <PaintingCard painting={item.painting} bleed={oneColumn} showArtist={showArtist} />
-          </View>
-        )
-      }
-      masonry={columns > 1}
-      numColumns={columns}
-      // One column runs paintings edge to edge; everything else keeps the page margin.
-      ListHeaderComponent={header && <View style={oneColumn && styles.inset}>{header}</View>}
-      ListEmptyComponent={empty && <View style={oneColumn && styles.inset}>{empty}</View>}
-      ListFooterComponent={footer && <View style={oneColumn && styles.inset}>{footer}</View>}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={1}
-      refreshControl={
-        onRefresh && (
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.mutedForeground}
-            colors={[colors.primary]}
-          />
-        )
-      }
-      contentContainerStyle={[styles.content, !oneColumn && styles.margin]}
-    />
+        }
+        masonry={columns > 1}
+        numColumns={columns}
+        // One column runs paintings edge to edge; everything else keeps the page margin.
+        ListHeaderComponent={header && <View style={oneColumn && styles.inset}>{header}</View>}
+        ListEmptyComponent={empty && <View style={oneColumn && styles.inset}>{empty}</View>}
+        ListFooterComponent={footer && <View style={oneColumn && styles.inset}>{footer}</View>}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={1}
+        refreshControl={
+          onRefresh && (
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.mutedForeground}
+              colors={[colors.primary]}
+            />
+          )
+        }
+        contentContainerStyle={[styles.content, !oneColumn && styles.margin]}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+  },
   content: {
     paddingBottom: spacing.lg,
   },
