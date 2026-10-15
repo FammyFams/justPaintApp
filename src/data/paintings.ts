@@ -121,13 +121,18 @@ function useRefreshFromTop(queryKey: readonly unknown[], refetch: () => Promise<
 
 // Newest first. Pages continue from the last post's time instead of an offset,
 // so new posts arriving mid-scroll don't repeat paintings on the next page.
-async function fetchFeedPage(before: string | null): Promise<FeedPage> {
+// With a tag slug, only paintings with that tag (the website's /?tag=): a
+// second, aliased embed does the filtering, so each painting keeps all its tags.
+async function fetchFeedPage(before: string | null, tag?: string): Promise<FeedPage> {
   let query = supabase
     .from('paintings')
-    .select(PAINTING_SELECT)
+    .select(
+      tag ? `${PAINTING_SELECT}, tag_filter:paintings_tags!inner ( tags!inner ( slug ) )` : PAINTING_SELECT,
+    )
     .order('created_at', { ascending: false })
     // One extra row tells whether there are more.
     .limit(FEED_PAGE_SIZE + 1);
+  if (tag) query = query.eq('tag_filter.tags.slug', tag);
   if (before) query = query.lt('created_at', before);
 
   const { data, error } = await query;
@@ -147,6 +152,18 @@ export function useFeed() {
     getNextPageParam: (last) => (last.hasMore ? last.paintings.at(-1)?.createdAt : undefined),
   });
   const refresh = useRefreshFromTop(FEED_KEY, query.refetch);
+  return { ...query, refresh };
+}
+
+export function useTagPaintings(slug: string) {
+  const queryKey = ['paintings', 'tag', slug];
+  const query = useInfiniteQuery({
+    queryKey,
+    queryFn: ({ pageParam }) => fetchFeedPage(pageParam, slug),
+    initialPageParam: null as string | null,
+    getNextPageParam: (last) => (last.hasMore ? last.paintings.at(-1)?.createdAt : undefined),
+  });
+  const refresh = useRefreshFromTop(queryKey, query.refetch);
   return { ...query, refresh };
 }
 

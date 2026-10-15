@@ -23,6 +23,7 @@ import { formatDate } from '@/lib/dates';
 import { env } from '@/lib/env';
 import { CommentList } from '@/screens/painting/comment-list';
 import { DeletePaintingButton } from '@/screens/painting/delete-painting-button';
+import { TagLinks } from '@/screens/painting/tag-links';
 import { ZoomableImage } from '@/components/zoomable-image';
 import { colors, fonts, spacing, touchTarget } from '@/theme';
 
@@ -134,11 +135,7 @@ export function PaintingScreen() {
 
             {painting.data.description ? <Text>{painting.data.description}</Text> : null}
 
-            {painting.data.tags.length > 0 && (
-              <Text variant="subhead">
-                {painting.data.tags.map((tag) => tag.name.toLowerCase()).join(', ')}
-              </Text>
-            )}
+            {painting.data.tags.length > 0 && <TagLinks tags={painting.data.tags} />}
 
             <CommentList paintingId={id} paintingTitle={painting.data.title} />
             <DeletePaintingButton painting={painting.data} />

@@ -96,6 +96,7 @@ function RootStack() {
       </Stack.Protected>
       <Stack.Screen name="painting/[id]" options={pageHeader} />
       <Stack.Screen name="artist/[name]" options={pageHeader} />
+      <Stack.Screen name="tag/[slug]" options={pageHeader} />
       <Stack.Screen name="report" options={pageHeader} />
       {/* Only while signed in: logging out or deleting the account closes them. */}
       <Stack.Protected guard={signedIn}>
