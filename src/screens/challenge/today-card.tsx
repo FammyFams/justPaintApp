@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '@/components/text';
+import { TodayMark } from '@/components/today-mark';
 import { challengeToday, type Challenge } from '@/data/challenge';
 import { fonts, spacing } from '@/theme';
 
@@ -31,9 +32,18 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
         </>
       ) : (
         <>
-          <Text variant="caption" tone="primary" style={styles.label}>
-            TODAY&apos;S PROMPT, DAY {today.prompt.day}
-          </Text>
+          <View
+            accessible
+            accessibilityLabel={`Today's prompt, day ${today.prompt.day}`}
+            style={styles.labelRow}
+          >
+            <TodayMark variant="caption" tone="primary" style={styles.label}>
+              TODAY&apos;S
+            </TodayMark>
+            <Text variant="caption" tone="primary" style={styles.label}>
+              {' '}PROMPT, DAY {today.prompt.day}
+            </Text>
+          </View>
           <Text variant="prompt">{today.prompt.prompt}</Text>
         </>
       )}
@@ -46,6 +56,10 @@ const styles = StyleSheet.create({
   // On the page itself, no box (2026-10-07).
   card: {
     gap: spacing.xs,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   label: {
     fontFamily: fonts.semibold,

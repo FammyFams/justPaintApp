@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
+import { PaintTodayLine } from '@/components/paint-today-line';
 import { PaintingGrid } from '@/components/painting-grid';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
@@ -34,7 +35,7 @@ export function FeedScreen() {
       <Text variant="display" accessibilityRole="header">
         JUST PAINT
       </Text>
-      <Text tone="muted">what did you paint today?</Text>
+      <PaintTodayLine />
       <Text variant="subhead">a painting community for beginners.</Text>
       {feed.isRefetchError && (
         <Text variant="caption">Couldn&apos;t refresh. Showing the paintings you already have.</Text>

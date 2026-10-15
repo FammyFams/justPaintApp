@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
+import { PaintTodayLine } from '@/components/paint-today-line';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
 import { TextLink } from '@/components/text-link';
@@ -26,9 +27,7 @@ export function WelcomeScreen() {
           <Text variant="display" accessibilityRole="header" style={styles.center}>
             JUST PAINT
           </Text>
-          <Text tone="muted" style={styles.center}>
-            what did you paint today?
-          </Text>
+          <PaintTodayLine center />
           <Text variant="subhead" style={styles.center}>
             a painting community for beginners.
           </Text>

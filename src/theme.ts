@@ -11,6 +11,7 @@ export const colors = {
   mutedForeground: '#5a586c', // dates, captions
   accent: '#e28413', // highlights only, always with navy text
   accentForeground: '#000022',
+  highlight: '#ffe27acc', // the marker swipe behind "today" (#ffe27a at 80%), never a fill
   // 4.0:1 on the page: fine for icons, borders and large text, not small text.
   error: '#de3c4b',
   border: '#eaddd8', // hairlines

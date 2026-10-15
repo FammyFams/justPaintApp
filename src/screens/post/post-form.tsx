@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
 import { FormError } from '@/components/form-error';
+import { PaintTodayLine } from '@/components/paint-today-line';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
 import { TextField } from '@/components/text-field';
@@ -89,7 +90,7 @@ export function PostForm() {
             <Text variant="display" accessibilityRole="header">
               Post
             </Text>
-            <Text tone="muted">what did you paint today?</Text>
+            <PaintTodayLine />
             {me.data?.displayName ? (
               <Text variant="subhead">
                 posting as{' '}
