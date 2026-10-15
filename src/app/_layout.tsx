@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { LaunchScreen } from '@/components/launch-screen';
 import { ToastHost } from '@/components/toast-host';
 import { useSession } from '@/data/account';
 import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
@@ -54,6 +55,7 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <RootStack />
         <ToastHost />
+        <LaunchScreen />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
