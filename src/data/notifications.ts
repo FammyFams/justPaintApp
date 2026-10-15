@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import { ME_KEY, useSession } from '@/data/account';
 import { api } from '@/lib/api';
 
 // Hearts and comments on your paintings, from the website (W7): the same list
-// as justpaint.art/notifications. A notification stays new until it's tapped;
-// the website decides what a tap clears (one row, or everything on that
-// painting: TAP_MARKS in its lib/notifications.ts), so after a tap the list
-// is asked for again instead of guessed here.
+// as justpaint.art/notifications. Opening the Activity tab marks them all seen
+// (useSeeAll); the rows keep their "new" dot for that visit. Tapping a row
+// also records the tap (the website decides how much a tap clears: TAP_MARKS
+// in its lib/notifications.ts), so after a tap the list is asked for again.
 
 type NotifiedPainting = {
   id: string;
@@ -43,13 +44,45 @@ const countKey = (userId: string | null) => [...ME_KEY, 'notifications', 'count'
 // The last 30 days, newest first, 50 at most. Asked for when the tab shows
 // and on pull to refresh: it reads up to 1,000 hearts on the server, so it
 // isn't polled.
+const fetchNotifications = async () => (await api<{ items: Notification[] }>('notifications')).items;
+
 export function useNotifications() {
   const { userId } = useSession();
   return useQuery({
     queryKey: listKey(userId),
-    queryFn: async () => (await api<{ items: Notification[] }>('notifications')).items,
+    queryFn: fetchNotifications,
     enabled: !!userId,
   });
+}
+
+// Opening Activity: the list loads first (joining a load already under way),
+// so its rows still show what's new on this visit, then everything is marked
+// seen (the website's mark-all, W7) and the count on the tab and the app icon
+// goes to 0. Nothing new: nothing is sent, the count is just checked again.
+export function useSeeAll() {
+  const queryClient = useQueryClient();
+  const { userId } = useSession();
+  return useCallback(async () => {
+    if (!userId) return;
+    try {
+      const items = await queryClient.fetchQuery({
+        queryKey: listKey(userId),
+        queryFn: fetchNotifications,
+        staleTime: 0,
+      });
+      if (!items.some((item) => item.new)) {
+        queryClient.invalidateQueries({ queryKey: countKey(userId) });
+        return;
+      }
+      const { unreadCount } = await api<{ unreadCount: number }>('notifications/seen', {
+        method: 'POST',
+        body: {},
+      });
+      queryClient.setQueryData(countKey(userId), unreadCount);
+    } catch {
+      // The list shows its own error; the count stays until the next visit.
+    }
+  }, [queryClient, userId]);
 }
 
 // The number on the Activity tab: one cheap database call, refreshed when the

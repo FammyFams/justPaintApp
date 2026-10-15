@@ -1,42 +1,34 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
 import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
-import { useNotifications, useTapNotification, useUnreadCount } from '@/data/notifications';
+import { useNotifications, useSeeAll, useTapNotification } from '@/data/notifications';
 import { ActivityRow } from '@/screens/activity/activity-row';
 import { colors, spacing } from '@/theme';
 
 // The signed-in Activity tab: hearts and comments on your paintings, newest
-// first. Opening the tab marks nothing; tapping a row does, then opens the
-// painting.
+// first. Opening the tab marks them all seen, so the count clears at once;
+// the rows keep their "new" dot for this visit. Tapping a row opens the painting.
 export function ActivityList() {
   const notifications = useNotifications();
-  const unread = useUnreadCount();
   const tap = useTapNotification();
+  const seeAll = useSeeAll();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fresh each time the tab comes into view (it stays mounted between visits);
-  // the first time, the queries are already loading.
-  const shownBefore = useRef(false);
-  const { refetch: refetchList } = notifications;
-  const { refetch: refetchCount } = unread;
+  // Each time the tab comes into view (it stays mounted between visits).
   useFocusEffect(
     useCallback(() => {
-      if (shownBefore.current) {
-        refetchList();
-        refetchCount();
-      }
-      shownBefore.current = true;
-    }, [refetchList, refetchCount]),
+      seeAll();
+    }, [seeAll]),
   );
 
   const refresh = async () => {
     setRefreshing(true);
-    await Promise.all([refetchList(), refetchCount()]);
+    await seeAll();
     setRefreshing(false);
   };
 
