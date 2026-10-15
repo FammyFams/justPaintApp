@@ -15,6 +15,14 @@ export class ApiError extends Error {
   }
 }
 
+// Vercel answers some failures itself, without the website's JSON: 402 while
+// the site is paused over its usage limit, 413 for a body over 4.5 MB, 429, 5xx.
+function fallbackMessage(status: number): string {
+  return status === 402 || status === 413 || status === 429 || status >= 500
+    ? 'The server is busy right now. Try again in a few minutes.'
+    : 'Something went wrong. Try again.';
+}
+
 type ApiInit = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   // Sent as JSON, or as multipart when it's FormData (a photo upload).
@@ -50,7 +58,7 @@ export async function api<T>(path: string, { method = 'GET', body }: ApiInit = {
     throw new ApiError(
       response.status,
       json?.error?.code ?? 'unknown',
-      json?.error?.message ?? 'Something went wrong. Try again.',
+      json?.error?.message ?? fallbackMessage(response.status),
     );
   }
   return json as T;
