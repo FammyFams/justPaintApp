@@ -9,10 +9,8 @@ import { Text } from '@/components/text';
 import { TextLink } from '@/components/text-link';
 import { errorMessage, useMe, useSession } from '@/data/account';
 import { env } from '@/lib/env';
-import { pushAvailable } from '@/lib/push';
 import { AccountActions } from '@/screens/settings/account-actions';
 import { AvatarPicker } from '@/screens/settings/avatar-picker';
-import { NotificationsSetting } from '@/screens/settings/notifications-setting';
 import { ProfileForm } from '@/screens/settings/profile-form';
 import { colors, spacing } from '@/theme';
 
@@ -55,12 +53,6 @@ export function SettingsScreen() {
             />
           )}
         </Section>
-
-        {pushAvailable && (
-          <Section title="Notifications">
-            <NotificationsSetting />
-          </Section>
-        )}
 
         <Section title="About">
           <TextLink

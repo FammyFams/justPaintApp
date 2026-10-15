@@ -13,7 +13,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LaunchScreen } from '@/components/launch-screen';
 import { ToastHost } from '@/components/toast-host';
 import { useSession } from '@/data/account';
-import { usePush } from '@/data/push';
 import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
 import { useAppBadge } from '@/lib/app-badge';
 import { queryClient } from '@/lib/query-client';
@@ -72,7 +71,6 @@ function RootStack() {
   // The saved session and the welcome flag are read first, so a signed-in
   // person never sees the welcome screen flash by.
   const ready = !loading && !welcomed.isPending;
-  usePush(ready);
   // First launch, signed out: the welcome screen comes before everything.
   const showWelcome = ready && welcomed.data === false && !signedIn;
 

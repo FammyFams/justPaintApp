@@ -13,7 +13,6 @@ import { TextField } from '@/components/text-field';
 import { TextLink } from '@/components/text-link';
 import { errorMessage, useMe } from '@/data/account';
 import { DESCRIPTION_MAX, TITLE_MAX, usePostPainting } from '@/data/paintings';
-import { useAskAfterPost } from '@/data/push';
 import { env } from '@/lib/env';
 import { showToast } from '@/lib/toast';
 import { ChallengeOption } from '@/screens/post/challenge-option';
@@ -34,7 +33,6 @@ export function PostForm() {
   const [tags, setTags] = useState<string[]>([]);
   const [challengeDay, setChallengeDay] = useState<number | null>(null);
   const post = usePostPainting();
-  const askAfterPost = useAskAfterPost();
 
   // Any change clears the last "couldn't post" message.
   const edit =
@@ -75,7 +73,6 @@ export function PostForm() {
           router.navigate('/profile');
           router.push({ pathname: '/painting/[id]', params: { id } });
           showToast({ id: 'posted', title: 'Posted successfully.' });
-          askAfterPost();
         },
       },
     );

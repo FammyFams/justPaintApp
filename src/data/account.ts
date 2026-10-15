@@ -10,7 +10,6 @@ import { File as LocalFile } from 'expo-file-system';
 import { api, ApiError } from '@/lib/api';
 import { env } from '@/lib/env';
 import { expectLogout, noticeLogout } from '@/lib/logged-out';
-import { clearPushRegistration, forgetPushOnLogout } from '@/lib/push';
 import { queryClient } from '@/lib/query-client';
 import { supabase } from '@/lib/supabase';
 
@@ -248,8 +247,6 @@ export function useDeleteAccount() {
   return useMutation({
     mutationFn: async () => {
       await api<{ deleted: true }>('account', { method: 'DELETE' });
-      // The website dropped this phone's push token with the account.
-      await clearPushRegistration();
       expectLogout();
       await supabase.auth.signOut({ scope: 'local' });
     },
@@ -267,8 +264,6 @@ export function useDeleteAccount() {
 export function useSignOut() {
   return useMutation({
     mutationFn: async () => {
-      // Pushes for this account stop coming to this phone.
-      await forgetPushOnLogout();
       expectLogout();
       await supabase.auth.signOut({ scope: 'local' });
     },
