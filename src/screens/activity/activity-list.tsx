@@ -8,6 +8,7 @@ import { PaperBackground } from '@/components/paper-background';
 import { Text } from '@/components/text';
 import { useNotifications, useSeeAll, useTapNotification } from '@/data/notifications';
 import { ActivityRow } from '@/screens/activity/activity-row';
+import { BadgePrompt } from '@/screens/activity/badge-prompt';
 import { colors, spacing } from '@/theme';
 
 // The signed-in Activity tab: hearts and comments on your paintings, newest
@@ -53,6 +54,7 @@ export function ActivityList() {
               <Text variant="display" accessibilityRole="header">
                 Activity
               </Text>
+              <BadgePrompt />
               {notifications.isRefetchError && (
                 <Text variant="caption">Couldn&apos;t refresh. Pull down to try again.</Text>
               )}
