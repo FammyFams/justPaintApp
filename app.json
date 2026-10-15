@@ -69,6 +69,7 @@
           "microphonePermission": false
         }
       ],
+      "expo-notifications",
       "./plugins/with-upload-signing"
     ],
     "experiments": {

@@ -14,6 +14,7 @@ import { LaunchScreen } from '@/components/launch-screen';
 import { ToastHost } from '@/components/toast-host';
 import { useSession } from '@/data/account';
 import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
+import { useAppBadge } from '@/lib/app-badge';
 import { queryClient } from '@/lib/query-client';
 import { colors, fonts } from '@/theme';
 
@@ -66,6 +67,7 @@ function RootStack() {
   const { signedIn, loading } = useSession();
   const welcomed = useWelcomed();
   const markWelcomed = useMarkWelcomed();
+  useAppBadge();
   // The saved session and the welcome flag are read first, so a signed-in
   // person never sees the welcome screen flash by.
   const ready = !loading && !welcomed.isPending;
