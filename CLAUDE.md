@@ -2,7 +2,7 @@
 
 # justPaint Art
 
-iPhone and Android app for https://justpaint.art (a chronological wall of beginner paintings). Expo SDK 57, Expo Router, TypeScript strict. Apple first; Android later.
+iPhone and Android app for https://justpaint.art (a chronological wall of beginner paintings). Expo SDK 58, Expo Router, TypeScript strict. Apple first; Android later.
 
 - Plan: vault note `A:\Users\matth\Desktop\obsidian brain\0 - Inbox\justPaint Art - App Plan.md`. Work is split into modules (A1, W2, ...). "Do module X" means: read only that module's item in the plan, do only it.
 - Website repo (Next.js 16 + Supabase): `A:\Users\matth\Desktop\justpaint`. W modules happen there.

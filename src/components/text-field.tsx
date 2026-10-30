@@ -1,5 +1,11 @@
 import { useState, type Ref } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  type TextInputInstance,
+  type TextInputProps,
+} from 'react-native';
 
 import { Text } from '@/components/text';
 import { colors, fonts, radius, spacing, touchTarget } from '@/theme';
@@ -8,7 +14,7 @@ type TextFieldProps = Omit<TextInputProps, 'style'> & {
   label: string;
   // Shown after the label, muted ("at least 8 characters").
   hint?: string;
-  ref?: Ref<TextInput>;
+  ref?: Ref<TextInputInstance>;
 };
 
 // A labelled text box like the website's: 3:1 edge, navy edge while typing.

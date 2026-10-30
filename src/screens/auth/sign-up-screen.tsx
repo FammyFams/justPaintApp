@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useRef, useState } from 'react';
-import { StyleSheet, View, type TextInput } from 'react-native';
+import { StyleSheet, View, type TextInputInstance } from 'react-native';
 
 import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
@@ -23,8 +23,8 @@ export function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
-  const emailField = useRef<TextInput>(null);
-  const passwordField = useRef<TextInput>(null);
+  const emailField = useRef<TextInputInstance>(null);
+  const passwordField = useRef<TextInputInstance>(null);
   const signUp = useSignUp();
 
   const submit = () => {

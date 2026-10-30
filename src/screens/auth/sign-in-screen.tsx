@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { StyleSheet, View, type TextInput } from 'react-native';
+import { StyleSheet, View, type TextInputInstance } from 'react-native';
 
 import { Button } from '@/components/button';
 import { FormError } from '@/components/form-error';
@@ -16,7 +16,7 @@ import { spacing } from '@/theme';
 export function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const passwordField = useRef<TextInput>(null);
+  const passwordField = useRef<TextInputInstance>(null);
   const signIn = useSignIn();
 
   const submit = () => {

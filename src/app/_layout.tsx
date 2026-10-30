@@ -14,10 +14,15 @@ import { ToastHost } from '@/components/toast-host';
 import { useSession } from '@/data/account';
 import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
 import { useAppBadge } from '@/lib/app-badge';
+import { useCloseAuthOnSignIn } from '@/lib/close-auth-on-sign-in';
 import { queryClient } from '@/lib/query-client';
 import { colors, fonts } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
+
+// The tabs sit at the bottom of the root stack (SDK 58): the launch screen, the
+// screen under a modal, and where closed guards fall back to.
+export const unstable_settings = { anchor: '(tabs)' };
 
 // Pages pushed over the tabs: a plain bar with just a back chevron.
 const pageHeader = {
@@ -66,6 +71,7 @@ function RootStack() {
   const welcomed = useWelcomed();
   const markWelcomed = useMarkWelcomed();
   useAppBadge();
+  useCloseAuthOnSignIn(signedIn);
   // The saved session and the welcome flag are read first, so a signed-in
   // person never sees the welcome screen flash by.
   const ready = !loading && !welcomed.isPending;
@@ -91,11 +97,13 @@ function RootStack() {
       }}
     >
       {/* First, so it's what opens when the launch link names no page. While the
-          welcome screen shows, the tabs are closed and it opens instead. */}
-      <Stack.Protected guard={!showWelcome}>
+          welcome screen shows, the tabs are closed and it opens instead.
+          A closed guard redirects (SDK 58), so each one says where to: without
+          redirectTo it falls to the first open route by file name, (auth). */}
+      <Stack.Protected guard={!showWelcome} redirectTo="/welcome">
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
-      <Stack.Protected guard={showWelcome}>
+      <Stack.Protected guard={showWelcome} redirectTo="/">
         <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
       </Stack.Protected>
       <Stack.Screen name="painting/[id]" options={pageHeader} />
@@ -103,15 +111,13 @@ function RootStack() {
       <Stack.Screen name="tag/[slug]" options={pageHeader} />
       <Stack.Screen name="report" options={pageHeader} />
       {/* Only while signed in: logging out or deleting the account closes them. */}
-      <Stack.Protected guard={signedIn}>
+      <Stack.Protected guard={signedIn} redirectTo="/profile">
         <Stack.Screen name="settings" options={pageHeader} />
         <Stack.Screen name="blocked" options={pageHeader} />
       </Stack.Protected>
-      {/* Only while signed out: signing in removes them, closing whichever is open. */}
-      <Stack.Protected guard={!signedIn}>
-        <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="require-account" options={accountSheet} />
-      </Stack.Protected>
+      {/* Signing in closes whichever is open (useCloseAuthOnSignIn). */}
+      <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="require-account" options={accountSheet} />
     </Stack>
   );
 }
