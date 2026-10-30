@@ -1,5 +1,4 @@
 import { PlusJakartaSans_400Regular } from '@expo-google-fonts/plus-jakarta-sans/400Regular';
-import { PlusJakartaSans_400Regular_Italic } from '@expo-google-fonts/plus-jakarta-sans/400Regular_Italic';
 import { PlusJakartaSans_600SemiBold } from '@expo-google-fonts/plus-jakarta-sans/600SemiBold';
 import { PlusJakartaSans_800ExtraBold } from '@expo-google-fonts/plus-jakarta-sans/800ExtraBold';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -41,7 +40,6 @@ const accountSheet = {
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     [fonts.regular]: PlusJakartaSans_400Regular,
-    [fonts.italic]: PlusJakartaSans_400Regular_Italic,
     [fonts.semibold]: PlusJakartaSans_600SemiBold,
     [fonts.extrabold]: PlusJakartaSans_800ExtraBold,
   });

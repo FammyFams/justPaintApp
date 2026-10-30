@@ -22,7 +22,6 @@ export const colors = {
 // Static font files: set the weight with fontFamily, never fontWeight.
 export const fonts = {
   regular: 'PlusJakartaSans_400Regular',
-  italic: 'PlusJakartaSans_400Regular_Italic',
   semibold: 'PlusJakartaSans_600SemiBold',
   extrabold: 'PlusJakartaSans_800ExtraBold',
 } as const;
@@ -47,12 +46,12 @@ export const touchTarget = 44;
 export const paperGrainOpacity = 0.02;
 
 export const type = {
-  // The "JUST PAINT" heading on the feed, italic like the website's h1.
-  display: { fontFamily: fonts.italic, fontSize: 36, lineHeight: 40, color: colors.foreground },
+  // The "JUST PAINT" heading on the feed. Upright: no italics anywhere in the app.
+  display: { fontFamily: fonts.regular, fontSize: 36, lineHeight: 40, color: colors.foreground },
   largeTitle: { fontFamily: fonts.extrabold, fontSize: 30, lineHeight: 36, color: colors.foreground },
   title: { fontFamily: fonts.semibold, fontSize: 22, lineHeight: 28, color: colors.foreground },
-  // The daily challenge prompt: big and italic, like the website.
-  prompt: { fontFamily: fonts.italic, fontSize: 26, lineHeight: 32, color: colors.foreground },
+  // The daily challenge prompt: big, like the website.
+  prompt: { fontFamily: fonts.regular, fontSize: 26, lineHeight: 32, color: colors.foreground },
   headline: { fontFamily: fonts.semibold, fontSize: 17, lineHeight: 22, color: colors.foreground },
   body: { fontFamily: fonts.regular, fontSize: 17, lineHeight: 24, color: colors.foreground },
   subhead: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 20, color: colors.mutedForeground },

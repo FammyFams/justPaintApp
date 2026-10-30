@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: spacing.md,
   },
-  // Words stretch to the full width and center their text: Android measures the
-  // italic heading a little short, which cut "PAINT" off when it was sized to fit.
+  // Words stretch to the full width and center their text: Android measured the
+  // old italic heading a little short, which cut "PAINT" off when it was sized to fit.
   top: {
     gap: spacing.xs,
   },
