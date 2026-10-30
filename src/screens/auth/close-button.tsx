@@ -1,31 +1,7 @@
-import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet } from 'react-native';
+import { Button } from '@/components/button';
 
-import { colors, touchTarget } from '@/theme';
-
-// Closes the whole sign-in modal, from any screen inside it.
+// Closes the whole sign-in modal, from any screen inside it. Plain crimson
+// words like every other button, not an icon.
 export function CloseButton({ onPress }: { onPress: () => void }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel="close"
-      hitSlop={8}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
-    >
-      <SymbolView name={{ ios: 'xmark', android: 'close' }} tintColor={colors.foreground} size={20} />
-    </Pressable>
-  );
+  return <Button title="Close" onPress={onPress} />;
 }
-
-const styles = StyleSheet.create({
-  button: {
-    minWidth: touchTarget,
-    minHeight: touchTarget,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.6,
-  },
-});

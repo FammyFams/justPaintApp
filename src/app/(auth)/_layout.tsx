@@ -18,10 +18,17 @@ export default function AuthLayout() {
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
         // The modal is one screen of the root stack: closing it leaves that.
-        // Android's back arrow already closes it from the first screen.
-        headerRight:
+        // Android's back arrow already closes it from the first screen. No
+        // shared background: iOS 26+ would put the words in a glass bubble.
+        unstable_headerRightItems:
           Platform.OS === 'ios'
-            ? () => <CloseButton onPress={() => navigation.getParent()?.goBack()} />
+            ? () => [
+                {
+                  type: 'custom',
+                  element: <CloseButton onPress={() => navigation.getParent()?.goBack()} />,
+                  hidesSharedBackground: true,
+                },
+              ]
             : undefined,
       })}
     />
