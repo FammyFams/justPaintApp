@@ -3,7 +3,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { colors, spacing } from '@/theme';
 
-// The website's hand-drawn loop (app/october-challenge/page.tsx), with the
+// The website's hand-drawn loop (components/challenge-page.tsx), with the
 // overlapping tail. Stretches to fit whatever it is placed over.
 const LOOP =
   'M30 8 C 70 0, 140 4, 152 20 C 160 36, 110 46, 70 44 C 25 42, 4 34, 8 22 C 12 10, 50 4, 95 6';

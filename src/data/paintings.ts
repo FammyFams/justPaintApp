@@ -1,4 +1,5 @@
 import {
+  skipToken,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -32,8 +33,9 @@ export type Painting = {
   tags: Tag[];
   heartCount: number;
   createdAt: string;
-  octoberChallenge: boolean;
-  octoberDay: number | null;
+  // The challenge it was entered in ("november-2026"), and which day's prompt.
+  challenge: string | null;
+  challengeDay: number | null;
 };
 
 // Width / height of each aspect bucket (the website uses the same: 3:4, 4:3, 1:1).
@@ -47,7 +49,7 @@ export const aspectRatios: Record<Painting['aspect'], number> = {
 // its foreign key, or PostgREST fails with "ambiguous relationship".
 const PAINTING_SELECT = `
   id, title, description, image_path, aspect, owner_id, guest_name, created_at, heart_count,
-  october_challenge, october_day,
+  challenge, challenge_day,
   profiles!paintings_owner_id_fkey ( display_name ),
   paintings_tags ( tags ( id, name, slug ) )
 `;
@@ -62,8 +64,8 @@ type PaintingRow = {
   guest_name: string | null;
   created_at: string;
   heart_count: number;
-  october_challenge: boolean;
-  october_day: number | null;
+  challenge: string | null;
+  challenge_day: number | null;
   profiles: { display_name: string } | null;
   paintings_tags: { tags: Tag | null }[];
 };
@@ -83,8 +85,8 @@ function toPainting(row: PaintingRow): Painting {
     tags: row.paintings_tags.map((pt) => pt.tags).filter((t): t is Tag => Boolean(t)),
     heartCount: row.heart_count,
     createdAt: row.created_at,
-    octoberChallenge: row.october_challenge,
-    octoberDay: row.october_day,
+    challenge: row.challenge,
+    challengeDay: row.challenge_day,
   };
 }
 
@@ -169,16 +171,16 @@ export function useTagPaintings(slug: string) {
 
 const CHALLENGE_KEY = ['paintings', 'challenge'];
 
-// October challenge entries, newest day first, then newest post (the website's
-// /feed/october order). Paged by offset, since the order isn't by time alone; a
-// new entry lands on today, at the top, so it only pushes rows down: the next
-// page may repeat one (paintingsOf drops it) but never skips one.
-async function fetchChallengePage(offset: number): Promise<FeedPage> {
+// One challenge's entries, newest day first, then newest post (the website's
+// /?challenge=november order). Paged by offset, since the order isn't by time
+// alone; a new entry lands on today, at the top, so it only pushes rows down:
+// the next page may repeat one (paintingsOf drops it) but never skips one.
+async function fetchChallengePage(challengeId: string, offset: number): Promise<FeedPage> {
   const { data, error } = await supabase
     .from('paintings')
     .select(PAINTING_SELECT)
-    .eq('october_challenge', true)
-    .order('october_day', { ascending: false, nullsFirst: false })
+    .eq('challenge', challengeId)
+    .order('challenge_day', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     // One extra row tells whether there are more.
     .range(offset, offset + FEED_PAGE_SIZE);
@@ -190,14 +192,18 @@ async function fetchChallengePage(offset: number): Promise<FeedPage> {
   };
 }
 
-export function useChallengeEntries() {
+// Waits for the challenge (useChallenge) to know which one to load.
+export function useChallengeEntries(challengeId: string | undefined) {
+  const queryKey = [...CHALLENGE_KEY, challengeId];
   const query = useInfiniteQuery({
-    queryKey: CHALLENGE_KEY,
-    queryFn: ({ pageParam }) => fetchChallengePage(pageParam),
+    queryKey,
+    queryFn: challengeId
+      ? ({ pageParam }) => fetchChallengePage(challengeId, pageParam)
+      : skipToken,
     initialPageParam: 0,
     getNextPageParam: (last, pages) => (last.hasMore ? pages.length * FEED_PAGE_SIZE : undefined),
   });
-  const refresh = useRefreshFromTop(CHALLENGE_KEY, query.refetch);
+  const refresh = useRefreshFromTop(queryKey, query.refetch);
   return { ...query, refresh };
 }
 
@@ -308,8 +314,8 @@ export type NewPainting = {
   title: string;
   description: string;
   tags: string[];
-  // The October challenge day it's for, or null.
-  challengeDay: number | null;
+  // The challenge (its id, "november-2026") and day it's for, or null.
+  challenge: { id: string; day: number } | null;
 };
 
 // Quick checks so an incomplete form doesn't need a round trip (and doesn't
@@ -341,9 +347,9 @@ export function usePostPainting() {
       form.append('aspect', values.photo.aspect);
       // Confirmed by posting (the line above the button), as at sign-up.
       form.append('agreedToTerms', 'true');
-      if (values.challengeDay) {
-        form.append('octoberChallenge', 'true');
-        form.append('octoberDay', String(values.challengeDay));
+      if (values.challenge) {
+        form.append('challenge', values.challenge.id);
+        form.append('challengeDay', String(values.challenge.day));
       }
       const answer = await api<{ painting: { id: string } }>('paintings', {
         method: 'POST',

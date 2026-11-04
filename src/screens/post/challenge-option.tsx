@@ -13,7 +13,7 @@ type ChallengeOptionProps = {
 };
 
 // Only while the challenge is on. Ticking it picks today's prompt; the arrows
-// move to another day, like the website's day list (any of the 31).
+// move to another day, like the website's day list (any day of the month).
 export function ChallengeOption({ day, onChange }: ChallengeOptionProps) {
   const challenge = useChallenge();
   if (!challenge.data) return null;
@@ -28,7 +28,11 @@ export function ChallengeOption({ day, onChange }: ChallengeOptionProps) {
   return (
     <View>
       <Checkbox
-        label={`It's for the challenge (today's prompt: ${today.prompt.prompt})`}
+        label={
+          today.prompt.prompt
+            ? `It's for the challenge (today's prompt: ${today.prompt.prompt})`
+            : `It's for the challenge (day ${today.prompt.day})`
+        }
         checked={day !== null}
         onChange={(checked) => onChange(checked ? today.prompt.day : null)}
       />
@@ -45,7 +49,8 @@ export function ChallengeOption({ day, onChange }: ChallengeOptionProps) {
             style={styles.dayText}
             accessibilityLiveRegion="polite"
           >
-            Day {chosen.day}: {chosen.prompt}
+            Day {chosen.day}
+            {chosen.prompt ? `: ${chosen.prompt}` : ''}
             {chosen.day === today.prompt.day ? ' (today)' : ''}
           </Text>
           <DayArrow

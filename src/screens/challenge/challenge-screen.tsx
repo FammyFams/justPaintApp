@@ -9,7 +9,6 @@ import { Text } from '@/components/text';
 import { ZoomableImage } from '@/components/zoomable-image';
 import { challengeToday, useChallenge, type Challenge } from '@/data/challenge';
 import { paintingsOf, useChallengeEntries } from '@/data/paintings';
-import { env } from '@/lib/env';
 import { DayHeading } from '@/screens/challenge/day-heading';
 import { ShareCalendarButton } from '@/screens/challenge/share-calendar-button';
 import { TodayCard } from '@/screens/challenge/today-card';
@@ -23,20 +22,15 @@ const dayFormat = new Intl.DateTimeFormat('en-US', {
 });
 const formatDay = (date: string) => dayFormat.format(new Date(date));
 
-// The website's calendar picture (also on its challenge page). A static file on
-// Vercel's CDN, kept in the disk cache, so each phone loads it about once.
-// October-only, like the database columns.
-const CALENDAR_URL = `${env.siteUrl}/october-challenge/calendar.png`;
-
 // The picture's text, for screen readers.
 function calendarLabel(challenge: Challenge): string {
-  const days = challenge.prompts.map((p) => `${formatDay(p.date)}, ${p.prompt}`);
+  const days = challenge.prompts.map((p) => `${formatDay(p.date)}, ${p.prompt ?? 'coming soon'}`);
   return `${challenge.name} calendar. ${days.join('. ')}`;
 }
 
 export function ChallengeScreen() {
   const challenge = useChallenge();
-  const entries = useChallengeEntries();
+  const entries = useChallengeEntries(challenge.data?.id);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const paintings = paintingsOf(entries.data);
@@ -61,7 +55,7 @@ export function ChallengeScreen() {
   const header = (
     <View style={styles.header}>
       <Text variant="display" accessibilityRole="header">
-        {challenge.data?.name ?? 'october painting challenge'}
+        {challenge.data?.name ?? 'Painting challenge'}
       </Text>
       <Text tone="muted">One prompt a day, all month long. Paint along with everyone.</Text>
       {(entries.isRefetchError || challenge.isRefetchError) && (
@@ -76,7 +70,7 @@ export function ChallengeScreen() {
               action={
                 <View style={styles.calendarActions}>
                   {showCalendar && (
-                    <ShareCalendarButton challenge={challenge.data} imageUrl={CALENDAR_URL} />
+                    <ShareCalendarButton challenge={challenge.data} />
                   )}
                   <Button
                     title={showCalendar ? 'Hide calendar' : 'Show calendar'}
@@ -88,7 +82,9 @@ export function ChallengeScreen() {
             {showCalendar && (
               <View style={styles.calendar}>
                 <ZoomableImage
-                  uri={CALENDAR_URL}
+                  // The website's calendar picture, a static file on Vercel's CDN. Kept in
+                  // the disk cache; its address changes with the prompts.
+                  uri={challenge.data.calendarUrl}
                   initialAspectRatio={1080 / 1350}
                   label={calendarLabel(challenge.data)}
                 />
@@ -153,12 +149,12 @@ export function ChallengeScreen() {
         <PaintingGrid
           paintings={paintings}
           columns={1}
-          sectionOf={(painting) => painting.octoberDay}
+          sectionOf={(painting) => painting.challengeDay}
           renderSection={(day) =>
             typeof day === 'number' ? (
               <DayHeading
-                date={prompts?.[day - 1] ? formatDay(prompts[day - 1].date) : `October ${day}`}
-                prompt={prompts?.[day - 1]?.prompt}
+                date={prompts?.[day - 1] ? formatDay(prompts[day - 1].date) : `Day ${day}`}
+                prompt={prompts?.[day - 1]?.prompt ?? undefined}
               />
             ) : (
               <DayHeading date="Other entries" />

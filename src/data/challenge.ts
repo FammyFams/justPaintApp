@@ -6,10 +6,13 @@ export type ChallengePrompt = {
   day: number;
   // YYYY-MM-DD, a calendar day in the challenge's time zone.
   date: string;
-  prompt: string;
+  // Null until the day's prompt is picked.
+  prompt: string | null;
 };
 
 export type Challenge = {
+  // What paintings.challenge holds for its entries ("november-2026").
+  id: string;
   name: string;
   hashtag: string;
   timeZone: string;
@@ -17,13 +20,18 @@ export type Challenge = {
   endDate: string;
   prompts: ChallengePrompt[];
   rules: string[];
+  // The website's challenge page and its calendar picture.
+  pageUrl: string;
+  calendarUrl: string;
 };
 
-// From the website (GET /api/app/v1/challenge, a static file there).
+// The newest challenge, from the website (GET /api/app/v1/challenge/latest, a
+// static file there). A new month shows up here when the website adds it, with
+// no app update.
 export function useChallenge() {
   return useQuery({
-    queryKey: ['challenge'],
-    queryFn: async () => (await api<{ challenge: Challenge }>('challenge')).challenge,
+    queryKey: ['challenge', 'latest'],
+    queryFn: async () => (await api<{ challenge: Challenge }>('challenge/latest')).challenge,
     // Only changes when the website is redeployed.
     staleTime: 60 * 60 * 1000,
   });

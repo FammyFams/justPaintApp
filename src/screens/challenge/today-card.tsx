@@ -44,7 +44,13 @@ export function TodayCard({ challenge, startLabel, action }: TodayCardProps) {
               {' '}PROMPT, DAY {today.prompt.day}
             </Text>
           </View>
-          <Text variant="prompt">{today.prompt.prompt}</Text>
+          {today.prompt.prompt ? (
+            <Text variant="prompt">{today.prompt.prompt}</Text>
+          ) : (
+            <Text variant="prompt" tone="muted">
+              Coming soon
+            </Text>
+          )}
         </>
       )}
       {action && <View style={styles.action}>{action}</View>}

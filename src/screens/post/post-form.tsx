@@ -12,6 +12,7 @@ import { Text } from '@/components/text';
 import { TextField } from '@/components/text-field';
 import { TextLink } from '@/components/text-link';
 import { errorMessage, useMe } from '@/data/account';
+import { useChallenge } from '@/data/challenge';
 import { DESCRIPTION_MAX, TITLE_MAX, usePostPainting } from '@/data/paintings';
 import { env } from '@/lib/env';
 import { showToast } from '@/lib/toast';
@@ -32,6 +33,8 @@ export function PostForm() {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [challengeDay, setChallengeDay] = useState<number | null>(null);
+  // The day only shows (ChallengeOption) once the challenge has loaded.
+  const challengeId = useChallenge().data?.id;
   const post = usePostPainting();
 
   // Any change clears the last "couldn't post" message.
@@ -60,7 +63,13 @@ export function PostForm() {
   const submit = () => {
     if (post.isPending || preparing) return;
     post.mutate(
-      { photo, title, description, tags, challengeDay },
+      {
+        photo,
+        title,
+        description,
+        tags,
+        challenge: challengeId && challengeDay ? { id: challengeId, day: challengeDay } : null,
+      },
       {
         onSuccess: (id) => {
           setPhoto(null);
