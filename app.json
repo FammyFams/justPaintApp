@@ -2,7 +2,8 @@
   "expo": {
     "name": "justPaint Art",
     "slug": "justpaint-art",
-    "version": "1.0.1",
+    "version": "1.0.2",
+    "platforms": ["ios", "android"],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "justpaint",
