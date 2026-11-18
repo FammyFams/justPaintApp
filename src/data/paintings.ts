@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { File as LocalFile } from 'expo-file-system';
 
+import { lastShownDay, type Challenge } from '@/data/challenge';
 import { paintingCardImageUrl, paintingImageUrl } from '@/data/images';
 import { api } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
@@ -175,11 +176,17 @@ const CHALLENGE_KEY = ['paintings', 'challenge'];
 // /?challenge=november order). Paged by offset, since the order isn't by time
 // alone; a new entry lands on today, at the top, so it only pushes rows down:
 // the next page may repeat one (paintingsOf drops it) but never skips one.
-async function fetchChallengePage(challengeId: string, offset: number): Promise<FeedPage> {
+// Entries for a day after upToDay wait for it (lastShownDay).
+async function fetchChallengePage(
+  challengeId: string,
+  upToDay: number,
+  offset: number,
+): Promise<FeedPage> {
   const { data, error } = await supabase
     .from('paintings')
     .select(PAINTING_SELECT)
     .eq('challenge', challengeId)
+    .or(`challenge_day.is.null,challenge_day.lte.${upToDay}`)
     .order('challenge_day', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     // One extra row tells whether there are more.
@@ -193,13 +200,16 @@ async function fetchChallengePage(challengeId: string, offset: number): Promise<
 }
 
 // Waits for the challenge (useChallenge) to know which one to load.
-export function useChallengeEntries(challengeId: string | undefined) {
-  const queryKey = [...CHALLENGE_KEY, challengeId];
+// The day is in the key, so the next day's entries load once it turns over.
+export function useChallengeEntries(challenge: Challenge | undefined) {
+  const upToDay = challenge && lastShownDay(challenge);
+  const queryKey = [...CHALLENGE_KEY, challenge?.id, upToDay];
   const query = useInfiniteQuery({
     queryKey,
-    queryFn: challengeId
-      ? ({ pageParam }) => fetchChallengePage(challengeId, pageParam)
-      : skipToken,
+    queryFn:
+      challenge && upToDay !== undefined
+        ? ({ pageParam }) => fetchChallengePage(challenge.id, upToDay, pageParam)
+        : skipToken,
     initialPageParam: 0,
     getNextPageParam: (last, pages) => (last.hasMore ? pages.length * FEED_PAGE_SIZE : undefined),
   });

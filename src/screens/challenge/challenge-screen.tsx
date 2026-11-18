@@ -30,7 +30,7 @@ function calendarLabel(challenge: Challenge): string {
 
 export function ChallengeScreen() {
   const challenge = useChallenge();
-  const entries = useChallengeEntries(challenge.data?.id);
+  const entries = useChallengeEntries(challenge.data);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const paintings = paintingsOf(entries.data);

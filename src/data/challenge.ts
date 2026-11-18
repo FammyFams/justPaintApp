@@ -58,3 +58,12 @@ export function challengeToday(challenge: Challenge, now = new Date()): Challeng
   const prompt = challenge.prompts.find((p) => p.date === today);
   return prompt ? { phase: 'during', prompt } : { phase: 'after' };
 }
+
+// The last day whose entries the Challenge tab shows: today during the month,
+// every day once it's over, none before it starts. An entry posted early for a
+// later prompt (day 22 on the 9th) waits for its day, like on the website.
+export function lastShownDay(challenge: Challenge, now = new Date()): number {
+  const today = challengeToday(challenge, now);
+  if (today.phase === 'during') return today.prompt.day;
+  return today.phase === 'after' ? challenge.prompts.length : 0;
+}
