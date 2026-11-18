@@ -16,6 +16,7 @@ import { useMarkWelcomed, useWelcomed } from '@/data/welcome';
 import { useAppBadge } from '@/lib/app-badge';
 import { useCloseAuthOnSignIn } from '@/lib/close-auth-on-sign-in';
 import { queryClient } from '@/lib/query-client';
+import { useStoreUpdateNudge } from '@/lib/store-update';
 import { colors, fonts } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -71,6 +72,7 @@ function RootStack() {
   const welcomed = useWelcomed();
   const markWelcomed = useMarkWelcomed();
   useAppBadge();
+  useStoreUpdateNudge();
   useCloseAuthOnSignIn(signedIn);
   // The saved session and the welcome flag are read first, so a signed-in
   // person never sees the welcome screen flash by.
